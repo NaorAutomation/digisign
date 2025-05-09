@@ -580,7 +580,7 @@
                             </div>
                             
                             <!-- פרטי קשר -->
-                            <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                                 <div>
                                     <label for="customer_email" class="form-label">
                                         <span class="flex items-center">
@@ -792,16 +792,17 @@
             const fileName = document.getElementById('file-name');
             
             if (idCardInput && uploadIdBtn) {
-                // לחיצה על כפתור העלאה
+                // לחיצה על כפתור העלאה - פתיחת גלריה (ללא capture)
                 uploadIdBtn.addEventListener('click', function() {
-                    idCardInput.setAttribute('capture', '');
+                    // הסרת תכונת capture כדי לאפשר בחירה מהגלריה
+                    idCardInput.removeAttribute('capture');
                     idCardInput.click();
                 });
                 
-                // לחיצה על כפתור צילום
+                // לחיצה על כפתור צילום - פתיחת מצלמה
                 document.querySelector('label[for="customer_id"]').addEventListener('click', function(e) {
+                    // הגדרת capture לפתיחת המצלמה
                     idCardInput.setAttribute('capture', 'environment');
-                    // לא צריך לקרוא ל-click כי הקליק על ה-label כבר יפעיל את האינפוט
                 });
                 
                 // שינוי בקובץ
@@ -830,26 +831,81 @@
             
             if (canvas && signatureDataInput) {
                 // התאמת גודל הקנבס לגודל המיכל
-                canvas.width = canvas.parentElement.clientWidth;
+                const canvasContainer = canvas.parentElement;
+                canvas.width = canvasContainer.clientWidth;
                 canvas.height = 180;
                 
+                // אתחול עם אפשרויות משופרות לתמיכה בכל סוגי המכשירים
                 const signaturePad = new SignaturePad(canvas, {
                     backgroundColor: 'rgb(255, 255, 255)',
                     penColor: 'rgb(0, 0, 0)',
-                    minWidth: 1,
-                    maxWidth: 2.5
+                    minWidth: 0.5,
+                    maxWidth: 2.5,
+                    throttle: 16, // פחות שהייה באנימציה
+                    velocityFilterWeight: 0.6, // תמיכה טובה יותר במכשירים איטיים
                 });
                 
-                // שינוי גודל הקנבס לפי גודל המסך
+                // שינוי גודל הקנבס בצורה יותר יציבה
                 function resizeCanvas() {
+                    // שמירת החתימה לפני שינוי הגודל
+                    const data = signaturePad.toData();
+                    
+                    // התאמת גודל הקנבס לגודל המיכל
                     const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                    canvas.width = canvas.parentElement.clientWidth;
-                    canvas.height = 180;
-                    canvas.getContext("2d").scale(ratio, ratio);
-                    signaturePad.clear(); // לנקות את החתימה הקיימת אחרי שינוי גודל
+                    canvas.width = canvasContainer.clientWidth * ratio;
+                    canvas.height = 180 * ratio;
+                    
+                    // התאמת סגנון לגודל החדש
+                    canvas.style.width = canvasContainer.clientWidth + 'px';
+                    canvas.style.height = '180px';
+                    
+                    // שינוי קנה מידה לפי יחס פיקסלים
+                    const ctx = canvas.getContext("2d");
+                    ctx.scale(ratio, ratio);
+                    
+                    // שחזור החתימה אם הייתה קיימת
+                    if (data && data.length) {
+                        signaturePad.fromData(data);
+                    } else {
+                        signaturePad.clear();
+                    }
                 }
                 
-                window.addEventListener('resize', resizeCanvas);
+                // הרצת התאמת גודל בתחילה
+                resizeCanvas();
+                
+                // האזנה לשינוי גודל המסך עם השהייה למניעת ריצודים
+                let resizeTimer;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(resizeCanvas, 200);
+                });
+                
+                // תיקון לבעיות מגע באייפון וספארי
+                function fixIOSTouch() {
+                    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                        // מניעת scroll ו-zoom במגע על הקנבס
+                        canvas.addEventListener('touchstart', function(e) {
+                            if (e.touches.length === 1) {
+                                e.preventDefault();
+                            }
+                        }, { passive: false });
+                        
+                        canvas.addEventListener('touchmove', function(e) {
+                            if (e.touches.length === 1) {
+                                e.preventDefault();
+                            }
+                        }, { passive: false });
+                        
+                        // תיקון לבעיית מגע כפול
+                        canvas.addEventListener('touchend', function(e) {
+                            e.preventDefault();
+                        }, { passive: false });
+                    }
+                }
+                
+                // הפעלת תיקון לאייפון
+                fixIOSTouch();
                 
                 // בדיקה אם החתימה ריקה
                 function updateUI() {
