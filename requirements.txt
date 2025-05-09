@@ -9,3 +9,4 @@ Pillow==10.0.0
 pdfminer.six==20221105
 docx2txt==0.8
 python-docx==0.8.11
+gunicorn==21.2.0
