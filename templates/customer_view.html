@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חתימה דיגיטלית - {{ business.business_name }}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    'sans': ['Heebo', 'Rubik', 'sans-serif'],
+                },
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',         // כחול עדכני
+                        secondary: '#10B981',       // ירוק
+                        accent: '#F97316',          // כתום
+                        dark: '#1E293B',            // כהה
+                        light: '#F8FAFC',           // בהיר
+                        surface: '#FFFFFF',         // רקע כרטיסים
+                        'surface-hover': '#F9FAFB',
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+    <!-- Google Fonts - Heebo (פונט עברי מודרני) -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Signature Pad -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+            color: #334155;
+        }
+        
+        /* רקע מודרני 2025 */
+        .bg-2025 {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at top right, #eef2ff 0%, #f0f9ff 35%, #f8fafc 100%);
+            z-index: -10;
+        }
+        
+        /* קונטיינר ראשי */
+        .document-container {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* כותרת המסמך */
+        .document-header {
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* תצוגת המסמך */
+        .document-view {
+            padding: 2rem 3rem;
+            background: white;
+            position: relative;
+            max-height: 60vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+        }
+        
+        .document-view::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .document-view::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+        
+        .document-view::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        /* אזור החתימה */
+        .signature-section {
+            background: #f8fafc;
+            border-top: 1px solid #f1f5f9;
+            padding: 2rem 3rem;
+        }
+        
+        /* כרטיסיות וקופסאות מידע */
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f5f9;
+        }
+        
+        /* אזור טופס החתימה */
+        .signature-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        /* משטח החתימה */
+        .signature-canvas-container {
+            border: 2px dashed #e2e8f0;
+            border-radius: 16px;
+            background-color: white;
+            transition: all 0.3s ease;
+            min-height: 180px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .signature-canvas-container:hover {
+            border-color: #3B82F6;
+        }
+        
+        /* סטטוס החוזה */
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-pending {
+            background-color: #fff7ed;
+            color: #c2410c;
+        }
+        
+        .status-signed {
+            background-color: #f0fdfa;
+            color: #0f766e;
+        }
+        
+        .status-expired {
+            background-color: #fef2f2;
+            color: #b91c1c;
+        }
+        
+        /* כפתורים */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 20px -3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+        
+        /* שדות קלט */
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #475569;
+        }
+        
+        /* עיצוב תוכן המסמך */
+        .document-text {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #334155;
+        }
+        
+        .document-text h1, .document-text h2, .document-text h3 {
+            color: #1e293b;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .document-text p {
+            margin-bottom: 1rem;
+        }
+        
+        /* צלמית חתימה */
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background-color: #f0fdfa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: #0f766e;
+            font-size: 3.5rem;
+            box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.25);
+            border: 4px solid #ecfdf5;
+            position: relative;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* אזור הודעת חתימה מוצלחת */
+        .success-message {
+            background: linear-gradient(to bottom, #ffffff, #f8fafc);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 5px 30px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+        
+        /* התאמה למובייל */
+        @media (max-width: 768px) {
+            .document-view {
+                padding: 1.5rem;
+                max-height: 50vh;
+            }
+            
+            .signature-section {
+                padding: 1.5rem;
+            }
+            
+            .signature-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .success-icon {
+                width: 100px;
+                height: 100px;
+                font-size: 3rem;
+            }
+            
+            .business-card .flex.mb-4 {
+                flex-direction: column;
+            }
+            
+            .business-card .mr-auto {
+                margin-right: 0;
+                margin-top: 1rem;
+            }
+            
+            .business-logo-container {
+                margin-bottom: 1rem;
+            }
+            
+            .business-details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* כרטיסיית פרטי עסק */
+        .business-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .business-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%233b82f6' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.8;
+        }
+        
+        .business-card-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .business-logo-container {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            padding: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .business-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .business-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 1px solid #f1f5f9;
+        }
+        
+        .business-detail-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background-color: #eef2ff;
+            color: #3b82f6;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- רקע מודרני 2025 -->
+    <div class="bg-2025"></div>
+    
+    <div class="min-h-screen py-10 px-4">
+        <!-- כותרת עם לוגו -->
+        <header class="max-w-5xl mx-auto mb-6 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                {% if business.logo_path %}
+                <div class="h-12 w-12 md:h-14 md:w-14 bg-white rounded-xl p-1 shadow-md flex items-center justify-center overflow-hidden">
+                    <img src="{{ business.logo_path }}" alt="{{ business.business_name }}" class="max-h-10 max-w-10 md:max-h-12 md:max-w-12 object-contain">
+                </div>
+                {% else %}
+                <div class="h-12 w-12 md:h-14 md:w-14 bg-primary/10 rounded-xl flex items-center justify-center shadow-md">
+                    <i class="fas fa-building text-primary text-xl md:text-2xl"></i>
+                </div>
+                {% endif %}
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold text-gray-800">{{ business.business_name }}</h1>
+                    <p class="text-sm text-gray-500">מערכת חתימה דיגיטלית</p>
+                </div>
+            </div>
+            
+            <span class="status-badge {% if contract.status == 'signed' %}status-signed{% elif contract.status == 'pending' %}status-pending{% elif contract.status == 'expired' %}status-expired{% else %}status-draft{% endif %}">
+                {% if contract.status == 'signed' %}
+                <i class="fas fa-check-circle"></i> חתום
+                {% elif contract.status == 'pending' %}
+                <i class="fas fa-clock"></i> ממתין לחתימה
+                {% elif contract.status == 'expired' %}
+                <i class="fas fa-calendar-times"></i> פג תוקף
+                {% else %}
+                <i class="fas fa-pencil-alt"></i> טיוטה
+                {% endif %}
+            </span>
+        </header>
+        
+        <!-- קונטיינר המסמך -->
+        <main class="max-w-5xl mx-auto document-container">
+            <!-- כותרת המסמך -->
+            <div class="document-header">
+                <h2 class="text-xl font-bold text-gray-800">{{ contract.notes or 'מסמך לחתימה' }}</h2>
+                
+                <!-- פעולות מסמך -->
+                <div class="flex gap-2">
+                    {% if contract.contract_type == 'file' and contract.pdf_path %}
+                    <a href="{{ contract.pdf_path }}" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span class="hidden md:inline">פתח במסך מלא</span>
+                    </a>
+                    {% endif %}
+                    <button type="button" onclick="window.print()" class="btn btn-secondary">
+                        <i class="fas fa-print"></i>
+                        <span class="hidden md:inline">הדפסה</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- כרטיס פרטי העסק -->
+            <div class="p-6 border-b border-gray-100">
+                <div class="business-card">
+                    <div class="business-card-content">
+                        <div class="flex flex-wrap mb-4">
+                            <!-- לוגו העסק ופרטים בסיסיים -->
+                            <div class="flex items-center">
+                                {% if business.logo_path %}
+                                <div class="business-logo-container">
+                                    <img src="{{ business.logo_path }}" alt="{{ business.business_name }}" class="max-w-full max-h-full object-contain">
+                                </div>
+                                {% else %}
+                                <div class="business-logo-container flex items-center justify-center">
+                                    <i class="fas fa-building text-primary text-3xl"></i>
+                                </div>
+                                {% endif %}
+                                
+                                <div dir="rtl">
+                                    <h3 class="text-2xl font-bold text-gray-800">{{ business.business_name }}</h3>
+                                    <p class="text-gray-600 flex items-center mt-1">
+                                        <i class="fas fa-id-card text-gray-400 ml-2"></i>
+                                        ח.פ / עוסק מורשה: {{ business.business_id_number }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- תג מתקדם -->
+                            <div class="mr-auto ml-0 md:ml-auto md:mr-0">
+                                <div class="flex items-center justify-center px-4 py-2 bg-blue-50 text-primary font-medium rounded-full">
+                                    <i class="fas fa-shield-alt ml-2"></i>
+                                    <span>עסק מאומת</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- גריד פרטי העסק -->
+                        <div class="business-details-grid">
+                            {% if business.contact_name %}
+                            <div class="business-detail-item">
+                                <div class="business-detail-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div dir="rtl">
+                                    <p class="text-sm text-gray-500">איש קשר</p>
+                                    <p class="font-medium text-gray-800">{{ business.contact_name }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if business.email %}
+                            <div class="business-detail-item">
+                                <div class="business-detail-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500" dir="rtl">דוא"ל</p>
+                                    <p class="font-medium text-gray-800 text-left" dir="ltr">{{ business.email }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if business.phone %}
+                            <div class="business-detail-item">
+                                <div class="business-detail-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500" dir="rtl">טלפון</p>
+                                    <p class="font-medium text-gray-800" dir="ltr">{{ business.phone }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if business.address %}
+                            <div class="business-detail-item">
+                                <div class="business-detail-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div dir="rtl">
+                                    <p class="text-sm text-gray-500">כתובת</p>
+                                    <p class="font-medium text-gray-800">{{ business.address }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- אזור הצגת החוזה -->
+            <div class="document-view">
+                {% if contract.contract_type == 'file' and contract.pdf_path %}
+                <iframe src="{{ contract.pdf_path }}" width="100%" height="700" class="border-0"></iframe>
+                {% elif contract.contract_type == 'text' and contract.text_content %}
+                <div class="document-text">
+                    {{ contract.text_content|safe }}
+                </div>
+                {% else %}
+                <div class="flex flex-col items-center justify-center py-12 text-gray-500">
+                    <i class="fas fa-file-alt text-5xl mb-5 text-gray-300"></i>
+                    <p class="font-medium">לא נמצא תוכן למסמך זה.</p>
+                    <p class="text-sm mt-1">אנא פנה לשולח המסמך לקבלת עזרה.</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- אזור החתימה -->
+            <div class="signature-section">
+                {% if contract.status == 'pending' %}
+                <!-- כותרת חתימה -->
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">חתימה על המסמך</h2>
+                    <p class="text-gray-600 mt-2">השלם את הפרטים וחתום על המסמך להשלמת התהליך</p>
+                </div>
+                
+                <!-- טופס חתימה -->
+                <form id="signature-form" action="{{ url_for('sign_contract', unique_url=contract.unique_url) }}" method="POST" enctype="multipart/form-data">
+                    <!-- אזור טופס מחולק -->
+                    <div class="signature-area">
+                        <!-- פרטי החותם -->
+                        <div class="info-card">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                                <i class="fas fa-user-edit text-primary mr-2"></i>
+                                פרטי החותם
+                            </h3>
+                            
+                            <!-- שם מלא -->
+                            <div class="mb-4">
+                                <label for="customer_name" class="form-label">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-primary mr-2"></i>
+                                        שם מלא
+                                        <span class="text-red-500 mr-1">*</span>
+                                    </span>
+                                </label>
+                                <input type="text" id="customer_name" name="customer_name" 
+                                       class="form-input" required value="{{ contract.customer_name or '' }}">
+                            </div>
+                            
+                            <!-- פרטי קשר -->
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div>
+                                    <label for="customer_email" class="form-label">
+                                        <span class="flex items-center">
+                                            <i class="fas fa-envelope text-primary mr-2"></i>
+                                            דוא"ל
+                                        </span>
+                                    </label>
+                                    <input type="email" id="customer_email" name="customer_email" 
+                                           class="form-input" value="{{ contract.customer_email or '' }}">
+                                </div>
+                                
+                                <div>
+                                    <label for="customer_phone" class="form-label">
+                                        <span class="flex items-center">
+                                            <i class="fas fa-phone text-primary mr-2"></i>
+                                            טלפון
+                                        </span>
+                                    </label>
+                                    <input type="tel" id="customer_phone" name="customer_phone" 
+                                           class="form-input" value="{{ contract.customer_phone or '' }}" dir="ltr">
+                                </div>
+                            </div>
+                            
+                            <!-- תעודת זהות -->
+                            <div>
+                                <label for="customer_id" class="form-label">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-id-card text-primary mr-2"></i>
+                                        צילום ת.ז
+                                    </span>
+                                </label>
+                                <div class="flex gap-2">
+                                    <input type="file" id="customer_id" name="customer_id" class="hidden" accept="image/*" capture>
+                                    <label for="customer_id" class="btn btn-secondary flex-1 cursor-pointer">
+                                        <i class="fas fa-camera mr-1"></i>
+                                        צלם ת.ז
+                                    </label>
+                                    <button type="button" id="upload-id" class="btn btn-secondary flex-1">
+                                        <i class="fas fa-upload mr-1"></i>
+                                        העלה קובץ
+                                    </button>
+                                </div>
+                                <div id="preview-container" class="mt-2 hidden">
+                                    <p id="file-name" class="text-sm text-gray-600 mb-1"></p>
+                                    <img id="preview-image" class="rounded-lg max-h-32 border border-gray-200 hidden" alt="תצוגה מקדימה">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- אזור חתימה -->
+                        <div class="info-card">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                                <i class="fas fa-signature text-primary mr-2"></i>
+                                חתימה
+                                <span class="text-red-500 mr-1">*</span>
+                            </h3>
+                            
+                            <div class="signature-canvas-container">
+                                <canvas id="signature-canvas" class="w-full h-full"></canvas>
+                            </div>
+                            <input type="hidden" id="signature-data" name="signature_data">
+                            
+                            <div class="flex justify-center gap-3 mb-2">
+                                <button type="button" id="clear-signature" class="btn btn-secondary">
+                                    <i class="fas fa-eraser mr-1"></i>
+                                    נקה חתימה
+                                </button>
+                            </div>
+                            
+                            <!-- הצהרת הסכמה -->
+                            <div class="p-4 bg-blue-50 rounded-xl mt-4">
+                                <p class="text-sm text-blue-800">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    בלחיצה על "חתום על המסמך" הנך מאשר/ת שקראת את המסמך והסכמת לתנאיו.
+                                    החתימה תקפה משפטית.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- כפתור חתימה -->
+                    <div class="flex justify-center mt-6">
+                        <button type="submit" id="sign-btn" class="btn btn-primary min-w-[250px]" disabled>
+                            <i class="fas fa-file-signature mr-1"></i>
+                            חתום על המסמך
+                        </button>
+                    </div>
+                </form>
+                
+                {% else %}
+                <!-- מסמך חתום או פג תוקף -->
+                {% if contract.status == 'signed' %}
+                <!-- אזור המסמך החתום - מרכוז ועיצוב משופר -->
+                <div class="max-w-5xl mx-auto">
+                    <!-- אזור מידע החתימה -->
+                    <div class="signature-area">
+                        <!-- פרטי החותם -->
+                        <div class="info-card">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                                <i class="fas fa-user-check text-primary mr-2"></i>
+                                פרטי החותם
+                            </h3>
+                            
+                            <div class="space-y-2">
+                                {% if contract.customer_name %}
+                                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                    <span class="font-medium text-gray-600">שם מלא:</span>
+                                    <span class="text-gray-800">{{ contract.customer_name }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if contract.customer_email %}
+                                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                    <span class="font-medium text-gray-600">דוא"ל:</span>
+                                    <span class="text-gray-800 text-left">{{ contract.customer_email }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if contract.customer_phone %}
+                                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                    <span class="font-medium text-gray-600">טלפון:</span>
+                                    <span class="text-gray-800" dir="ltr">{{ contract.customer_phone }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                {% if contract.signature_timestamp %}
+                                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                    <span class="font-medium text-gray-600">זמן חתימה:</span>
+                                    <span class="text-gray-800">{{ contract.signature_timestamp.split('T')[0] if 'T' in contract.signature_timestamp else contract.signature_timestamp }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- פרטי חתימה -->
+                        <div class="info-card">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                                <i class="fas fa-file-signature text-primary mr-2"></i>
+                                פרטי החתימה
+                            </h3>
+                            
+                            <!-- חתימה -->
+                            {% if contract.signature_path %}
+                            <div class="mb-4">
+                                <h4 class="text-md font-semibold text-gray-700 mb-2">חתימה דיגיטלית:</h4>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <img src="{{ contract.signature_path }}" alt="חתימה" class="mx-auto max-h-24 object-contain">
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- ת.ז -->
+                            {% if contract.customer_id_path %}
+                            <div>
+                                <h4 class="text-md font-semibold text-gray-700 mb-2">צילום תעודת זהות:</h4>
+                                <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <img src="{{ contract.customer_id_path }}" alt="תעודת זהות" class="mx-auto max-w-full max-h-48 object-contain">
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- אימות מערכת -->
+                    <div class="max-w-xl mx-auto mt-8 p-5 bg-blue-50 rounded-xl">
+                        <p class="text-sm text-blue-800 flex items-center">
+                            <i class="fas fa-shield-alt mr-2"></i>
+                            מסמך זה נחתם דיגיטלית ומאומת ע"י מערכת DigiSign. חתימה זו תקפה משפטית לפי חוק חתימה אלקטרונית.
+                        </p>
+                    </div>
+                    
+                    <!-- הודעת אישור חתימה בתחתית העמוד -->
+                    <div class="text-center mt-12 py-6 bg-white rounded-2xl shadow-sm success-message">
+                        <div class="success-icon mb-5">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-3">המסמך נחתם בהצלחה</h2>
+                        <p class="text-lg text-gray-600">תודה על חתימתך. המסמך נשמר במערכת.</p>
+                    </div>
+                </div>
+                
+                {% else %}
+                <!-- מסמך פג תוקף -->
+                <div class="text-center py-12">
+                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-4 mx-auto">
+                        <i class="fas fa-times-circle text-4xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">פג תוקף המסמך</h3>
+                    <p class="text-gray-600">מסמך זה אינו זמין יותר לחתימה.</p>
+                </div>
+                {% endif %}
+                {% endif %}
+            </div>
+        </main>
+        
+        <!-- פוטר מינימליסטי -->
+        <footer class="max-w-5xl mx-auto mt-8 text-center text-sm text-gray-500">
+            <p>© {{ business.business_name }} {{ {'01': 'ינואר', '02': 'פברואר', '03': 'מרץ', '04': 'אפריל', '05': 'מאי', '06': 'יוני', '07': 'יולי', '08': 'אוגוסט', '09': 'ספטמבר', '10': 'אוקטובר', '11': 'נובמבר', '12': 'דצמבר'}[(now().strftime('%m'))] }} {{ now().strftime('%Y') }} | מערכת DigiSign</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // טיפול בהעלאת קובץ ת.ז
+            const idCardInput = document.getElementById('customer_id');
+            const uploadIdBtn = document.getElementById('upload-id');
+            const previewContainer = document.getElementById('preview-container');
+            const previewImage = document.getElementById('preview-image');
+            const fileName = document.getElementById('file-name');
+            
+            if (idCardInput && uploadIdBtn) {
+                // לחיצה על כפתור העלאה
+                uploadIdBtn.addEventListener('click', function() {
+                    idCardInput.setAttribute('capture', '');
+                    idCardInput.click();
+                });
+                
+                // לחיצה על כפתור צילום
+                document.querySelector('label[for="customer_id"]').addEventListener('click', function(e) {
+                    idCardInput.setAttribute('capture', 'environment');
+                    // לא צריך לקרוא ל-click כי הקליק על ה-label כבר יפעיל את האינפוט
+                });
+                
+                // שינוי בקובץ
+                idCardInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        fileName.textContent = file.name;
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImage.src = e.target.result;
+                            previewImage.classList.remove('hidden');
+                            previewContainer.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            {% if contract.status == 'pending' %}
+            // אתחול משטח חתימה
+            const canvas = document.getElementById('signature-canvas');
+            const signatureDataInput = document.getElementById('signature-data');
+            const clearSignatureBtn = document.getElementById('clear-signature');
+            const signBtn = document.getElementById('sign-btn');
+            
+            if (canvas && signatureDataInput) {
+                // התאמת גודל הקנבס לגודל המיכל
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = 180;
+                
+                const signaturePad = new SignaturePad(canvas, {
+                    backgroundColor: 'rgb(255, 255, 255)',
+                    penColor: 'rgb(0, 0, 0)',
+                    minWidth: 1,
+                    maxWidth: 2.5
+                });
+                
+                // שינוי גודל הקנבס לפי גודל המסך
+                function resizeCanvas() {
+                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = 180;
+                    canvas.getContext("2d").scale(ratio, ratio);
+                    signaturePad.clear(); // לנקות את החתימה הקיימת אחרי שינוי גודל
+                }
+                
+                window.addEventListener('resize', resizeCanvas);
+                
+                // בדיקה אם החתימה ריקה
+                function updateUI() {
+                    if (signaturePad.isEmpty()) {
+                        signBtn.disabled = true;
+                    } else {
+                        signBtn.disabled = false;
+                        signatureDataInput.value = signaturePad.toDataURL();
+                    }
+                }
+                
+                // לנקות את החתימה
+                clearSignatureBtn.addEventListener('click', function() {
+                    signaturePad.clear();
+                    updateUI();
+                });
+                
+                // עדכון בכל שינוי בחתימה
+                signaturePad.addEventListener('endStroke', updateUI);
+                
+                // טיפול בשליחת הטופס
+                const signatureForm = document.getElementById('signature-form');
+                signatureForm.addEventListener('submit', function(e) {
+                    if (signaturePad.isEmpty()) {
+                        e.preventDefault();
+                        alert('אנא חתום לפני שליחת הטופס');
+                        return false;
+                    }
+                    
+                    // המרת החתימה לתמונה
+                    const signatureData = signaturePad.toDataURL('image/png');
+                    
+                    // יצירת קובץ מתמונת החתימה
+                    const binaryData = atob(signatureData.split(',')[1]);
+                    const array = [];
+                    for (let i = 0; i < binaryData.length; i++) {
+                        array.push(binaryData.charCodeAt(i));
+                    }
+                    const blob = new Blob([new Uint8Array(array)], {type: 'image/png'});
+                    const file = new File([blob], "signature.png", {type: "image/png"});
+                    
+                    // יצירת שדה קובץ לחתימה
+                    const formData = new FormData(this);
+                    formData.append('signature', file);
+                    
+                    // שמירה ידנית של הטופס
+                    e.preventDefault();
+                    
+                    // הצגת מצב טעינה
+                    signBtn.disabled = true;
+                    signBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> מעבד...';
+                    
+                    // שליחת הטופס עם הקובץ בצורה ידנית
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // הצגת הודעת הצלחה
+                            signBtn.innerHTML = '<i class="fas fa-check"></i> נחתם בהצלחה';
+                            signBtn.classList.remove('bg-primary');
+                            signBtn.classList.add('bg-green-500');
+                            
+                            // רענון הדף להצגת סטטוס החתימה
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            alert(data.error || 'אירעה שגיאה בעת שליחת החתימה');
+                            signBtn.disabled = false;
+                            signBtn.innerHTML = '<i class="fas fa-file-signature mr-1"></i> חתום על המסמך';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('אירעה שגיאה בעת שליחת החתימה');
+                        signBtn.disabled = false;
+                        signBtn.innerHTML = '<i class="fas fa-file-signature mr-1"></i> חתום על המסמך';
+                    });
+                });
+            }
+            {% endif %}
+            
+            // פונקציה להחזרת תאריך נוכחי
+            function now() {
+                return new Date();
+            }
+        });
+    </script>
+</body>
+</html> 

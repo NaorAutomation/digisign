@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<style>
+    .success-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .success-icon {
+        width: 4rem;
+        height: 4rem;
+        background-color: #d1fae5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #10b981;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem auto;
+    }
+    
+    .action-btn {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+    
+    .copy-success {
+        position: fixed;
+        top: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #10b981;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .copy-success.show {
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- הודעת העתקה מוצלחת -->
+<div id="copy-success" class="copy-success">
+    <div class="flex items-center gap-2">
+        <i class="fas fa-check-circle"></i>
+        <span>הקישור הועתק בהצלחה!</span>
+    </div>
+</div>
+
+<!-- עמוד אישור שליחת חוזה -->
+<section class="py-12 md:py-16 px-4 md:px-8">
+    <div class="container mx-auto max-w-2xl">
+        <div class="success-card p-8 text-center">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-3">החוזה נוצר בהצלחה!</h1>
+            <p class="text-gray-600 mb-8">החוזה נוצר ומוכן לשליחה ללקוח. באפשרותך לשלוח אותו עכשיו או לחזור לדשבורד.</p>
+            
+            <div class="border-t border-gray-200 pt-8 mb-6">
+                <h2 class="font-bold text-xl text-gray-800 mb-4">אפשרויות שליחה</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
+                    {% if whatsapp_url %}
+                    <a href="{{ whatsapp_url }}" target="_blank" class="action-btn bg-green-500 hover:bg-green-600 text-white">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>שליחה בוואטסאפ</span>
+                    </a>
+                    {% endif %}
+                    
+                    <button id="copy-link" class="action-btn bg-blue-100 hover:bg-blue-200 text-blue-800" data-url="{{ request.host_url }}contract/{{ contract_id }}">
+                        <i class="fas fa-link"></i>
+                        <span>העתקת קישור</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div>
+                <a href="{{ url_for('business_dashboard') }}" class="inline-flex items-center text-primary font-medium hover:underline">
+                    <i class="fas fa-arrow-right ml-2"></i>
+                    <span>חזרה לדשבורד</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const copyLinkBtn = document.getElementById('copy-link');
+        const copySuccess = document.getElementById('copy-success');
+        
+        if (copyLinkBtn) {
+            copyLinkBtn.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                
+                navigator.clipboard.writeText(url).then(function() {
+                    // הצגת הודעת הצלחה
+                    copySuccess.classList.add('show');
+                    
+                    // הסתרה אחרי 3 שניות
+                    setTimeout(function() {
+                        copySuccess.classList.remove('show');
+                    }, 3000);
+                    
+                    // שינוי זמני של כפתור ההעתקה
+                    const originalIcon = copyLinkBtn.querySelector('i').className;
+                    const originalText = copyLinkBtn.querySelector('span').textContent;
+                    
+                    copyLinkBtn.querySelector('i').className = 'fas fa-check';
+                    copyLinkBtn.querySelector('span').textContent = 'הועתק בהצלחה';
+                    
+                    // החזרת הטקסט המקורי אחרי 2 שניות
+                    setTimeout(function() {
+                        copyLinkBtn.querySelector('i').className = originalIcon;
+                        copyLinkBtn.querySelector('span').textContent = originalText;
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('Error copying link: ', err);
+                });
+            });
+        }
+    });
+</script>
+{% endblock %} 

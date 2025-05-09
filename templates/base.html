@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiSign - חתימה דיגיטלית חכמה</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    'sans': ['Rubik', 'sans-serif'],
+                },
+                extend: {
+                    colors: {
+                        primary: '#0A2463',      // כחול כהה
+                        secondary: '#3E92CC',    // כחול בהיר
+                        accent: '#2EC4B6',       // טורקיז
+                        dark: '#1e293b',         // כהה
+                        light: '#f8fafc',        // בהיר
+                        orange: '#FF9F1C',       // כתום
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+    <!-- Google Fonts - Rubik -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP Animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
+    
+    <style>
+        /* סגנונות כלליים */
+        body {
+            font-family: 'Rubik', sans-serif;
+            overflow-x: hidden;
+            background-color: #f8fafc;
+        }
+        
+        /* גרדיאנט רקע - הוסר מכאן והועבר לסקשן הספציפי */
+        
+        /* שכבת רעש לאפקט ריאליסטי */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJub2lzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+CjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CjxmZUJsZW5kIG1vZGU9Im92ZXJsYXkiLz4KPC9maWx0ZXI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+Cjwvc3ZnPg==');
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* זיהוי אירועי גלילה */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* מחלקת הסתרה */
+        .d-none {
+            display: none !important;
+        }
+        
+        /* חפצים צפים עם אנימציה */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* גלים אבסטרקטיים בתחתית הדף */
+        .wave-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            pointer-events: none;
+        }
+        
+        /* כרטיסייה בעיצוב זכוכית מט */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+        
+        /* כפתור עם אפקט הברקה */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-glow:after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: rotate(30deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+        
+        .btn-glow:hover:after {
+            opacity: 1;
+            transform: rotate(30deg) translate(100%, -100%);
+        }
+
+        /* סגנונות נוספים עבור האתר עם הרקע החדש */
+        section {
+            position: relative;
+        }
+
+        .text-dark-section {
+            color: #1e293b;
+        }
+
+        /* עדכון צבעי כותרת */
+        header {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        header a {
+            color: #1e293b !important;
+        }
+
+        header a:hover {
+            color: #4f46e5 !important;
+        }
+
+        header a.bg-white {
+            background-color: #4f46e5 !important;
+            color: white !important;
+        }
+    </style>
+    
+    <!-- סגנונות נוספים ספציפיים לכל דף -->
+    {% block styles %}{% endblock %}
+</head>
+<body class="text-dark">
+    <!-- רקע רעש בלבד, ללא הגרדיאנט הגלובלי -->
+    <div class="noise"></div>
+    
+    <!-- כותרת הדף עם ניווט -->
+    <header class="sticky top-0 z-50 py-4 px-4 md:px-8 bg-white/95 backdrop-blur-md border-b border-gray-200">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center">
+                <!-- תפריט ראשי - גרסת מחשב (עכשיו בצד ימין) -->
+                <nav class="hidden md:flex items-center space-x-1 space-x-reverse">
+                    <a href="/" class="px-4 py-2 text-dark hover:text-primary font-medium transition">דף הבית</a>
+                    <a href="#services" class="px-4 py-2 text-dark hover:text-primary font-medium transition">שירותים</a>
+                    <a href="#pricing" class="px-4 py-2 text-dark hover:text-primary font-medium transition">מחירים</a>
+                    <a href="#contact" class="px-4 py-2 text-dark hover:text-primary font-medium transition">צור קשר</a>
+                </nav>
+                
+                <!-- כפתור תפריט - גרסת מובייל (עכשיו בצד ימין) -->
+                <button id="menu-toggle" class="md:hidden text-dark text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- לוגו ושם האתר (עכשיו בצד שמאל) -->
+                <a href="/" class="flex items-center gap-2">
+                    <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">DigiSign</span>
+                    <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg">
+                        <img src="https://i.ibb.co/qYHvZyBc/Capture-removebg-preview-1.png" alt="DigiSign Logo" class="w-8 h-8 object-contain">
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- תפריט מובייל - מוסתר כברירת מחדל -->
+    <div id="mobile-menu" class="fixed top-0 right-0 w-72 h-full z-50 bg-white transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-8">
+                <button id="menu-close" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <a href="/" class="flex items-center gap-2">
+                    <span class="text-xl font-bold text-primary">DigiSign</span>
+                    <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                        <img src="https://i.ibb.co/qYHvZyBc/Capture-removebg-preview-1.png" alt="DigiSign Logo" class="w-6 h-6 object-contain">
+                    </div>
+                </a>
+            </div>
+            
+            <nav class="flex flex-col space-y-4">
+                <a href="/" class="px-4 py-2 text-gray-800 hover:text-primary font-medium transition">דף הבית</a>
+                <a href="#services" class="px-4 py-2 text-gray-800 hover:text-primary font-medium transition">שירותים</a>
+                <a href="#pricing" class="px-4 py-2 text-gray-800 hover:text-primary font-medium transition">מחירים</a>
+                <a href="#contact" class="px-4 py-2 text-gray-800 hover:text-primary font-medium transition">צור קשר</a>
+                <a href="/business/login" class="mt-4 px-6 py-3 bg-primary text-white font-medium rounded-lg text-center">כניסה</a>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- תוכן העמוד העיקרי -->
+    <main class="min-h-screen relative z-10">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- פוטר -->
+    <footer class="relative bg-[#0A2463] text-white py-12 mt-10 border-t border-[#3E92CC]/20">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- לוגו וטקסט -->
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                            <img src="https://i.ibb.co/qYHvZyBc/Capture-removebg-preview-1.png" alt="DigiSign Logo" class="w-6 h-6 object-contain">
+                        </div>
+                        <span class="text-xl font-bold">DigiSign</span>
+                    </div>
+                    <p class="text-white/80 mb-4">
+                        פתרון החתימות הדיגיטליות המתקדם ביותר לעסקים.
+                        חתימות מאובטחות, מהירות ובעלות תוקף משפטי מלא.
+                    </p>
+                </div>
+                
+                <!-- קישורים מהירים -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">קישורים מהירים</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-white/80 hover:text-white transition">דף הבית</a></li>
+                        <li><a href="#services" class="text-white/80 hover:text-white transition">שירותים</a></li>
+                        <li><a href="#pricing" class="text-white/80 hover:text-white transition">מחירים</a></li>
+                        <li><a href="/terms" class="text-white/80 hover:text-white transition">תנאי שימוש</a></li>
+                        <li><a href="/privacy" class="text-white/80 hover:text-white transition">מדיניות פרטיות</a></li>
+                    </ul>
+                </div>
+                
+                <!-- צור קשר -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">צור קשר</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-envelope text-white/60"></i>
+                            <a href="mailto:naorbarzion@gmail.com" class="text-white/80 hover:text-white transition">naorbarzion@gmail.com</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-phone text-white/60"></i>
+                            <a href="tel:+972546358258" class="text-white/80 hover:text-white transition">054-635-8258</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-user text-white/60"></i>
+                            <span class="text-white/80">נאור בר ציון</span>
+                        </li>
+                    </ul>
+                    
+                    <!-- רשתות חברתיות -->
+                    <div class="flex gap-4 mt-4">
+                        <a href="#" class="text-white/80 hover:text-[#2EC4B6] transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-white/80 hover:text-[#2EC4B6] transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-white/80 hover:text-[#2EC4B6] transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-white/80 hover:text-[#2EC4B6] transition">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- זכויות יוצרים -->
+            <div class="border-t border-[#3E92CC]/20 mt-8 pt-6 text-center text-white/60">
+                <p>&copy; 2025 DigiSign. כל הזכויות שמורות.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- סקריפטים משותפים -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // רישום GSAP ScrollTrigger
+            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+                
+                // אנימציות בטעינת הדף
+                const tl = gsap.timeline();
+                tl.from('header', { y: -100, opacity: 0, duration: 0.8, ease: 'power3.out' });
+                tl.from('.hero-content h1', { y: 50, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.2');
+                tl.from('.hero-content p', { y: 30, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4');
+                tl.from('.hero-content .btn', { y: 20, opacity: 0, duration: 0.5, ease: 'power3.out' }, '-=0.2');
+                
+                // אפקט התגלות בגלילה
+                gsap.utils.toArray('.reveal').forEach(function(elem) {
+                    ScrollTrigger.create({
+                        trigger: elem,
+                        start: 'top 80%',
+                        onEnter: () => elem.classList.add('active')
+                    });
+                });
+            }
+            
+            // ניהול תפריט מובייל
+            const menuToggle = document.getElementById('menu-toggle');
+            const menuClose = document.getElementById('menu-close');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (menuToggle && menuClose && mobileMenu) {
+                menuToggle.addEventListener('click', function() {
+                    mobileMenu.classList.remove('translate-x-full');
+                });
+                
+                menuClose.addEventListener('click', function() {
+                    mobileMenu.classList.add('translate-x-full');
+                });
+            }
+        });
+        
+        // פונקציה להצגת הודעות
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.createElement('div');
+            alertContainer.className = `fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} shadow-lg`;
+            alertContainer.innerHTML = message;
+            
+            document.body.appendChild(alertContainer);
+            
+            gsap.from(alertContainer, { y: -50, opacity: 0, duration: 0.3 });
+            
+            setTimeout(() => {
+                gsap.to(alertContainer, {
+                    opacity: 0,
+                    y: -20,
+                    duration: 0.3,
+                    onComplete: () => alertContainer.remove()
+                });
+            }, 4000);
+        }
+    </script>
+    
+    <!-- סקריפטים נוספים ספציפיים לכל דף -->
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

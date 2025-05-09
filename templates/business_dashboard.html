@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<style>
+    /* סגנונות ספציפיים לדשבורד */
+    .dashboard-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .status-pending {
+        background-color: #FEF3C7;
+        color: #92400E;
+    }
+    
+    .status-signed {
+        background-color: #D1FAE5;
+        color: #065F46;
+    }
+    
+    .status-expired {
+        background-color: #FEE2E2;
+        color: #991B1B;
+    }
+    
+    .status-draft {
+        background-color: #E0E7FF;
+        color: #4338CA;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* אנימציה קלה למספרים בסטטיסטיקה */
+    .stat-number {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeInUp 0.6s forwards;
+    }
+    
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* סגנונות לכרטיסיות המותאמות למובייל */
+    .contract-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-right: 4px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .contract-card:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .contract-card.pending {
+        border-right-color: #F59E0B;
+    }
+    
+    .contract-card.signed {
+        border-right-color: #10B981;
+    }
+    
+    .contract-card.expired {
+        border-right-color: #EF4444;
+    }
+    
+    .contract-card.draft {
+        border-right-color: #6366F1;
+    }
+    
+    .card-section {
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .card-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .card-label {
+        font-size: 0.75rem;
+        color: #6B7280;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* תצוגת טבלה בדסקטופ וכרטיסיות במובייל */
+    .contracts-table-view {
+        display: none;
+    }
+    
+    .contracts-card-view {
+        display: block;
+    }
+    
+    @media (min-width: 768px) {
+        .contracts-table-view {
+            display: block;
+        }
+        
+        .contracts-card-view {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- דשבורד העסק -->
+<section class="py-8 md:py-12 px-4 md:px-8">
+    <div class="container mx-auto">
+        <!-- כותרת הדף עם פרטי העסק -->
+        <div class="bg-white rounded-2xl p-6 mb-8 shadow-lg">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="flex items-center gap-4">
+                    {% if business.logo_path %}
+                    <div class="h-16 w-16 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
+                        <img src="{{ business.logo_path }}" alt="{{ business.business_name }}" class="h-14 w-14 object-contain">
+                    </div>
+                    {% else %}
+                    <div class="h-16 w-16 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-building text-primary text-2xl"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">{{ business.business_name }}</h1>
+                        <p class="text-gray-500">ח.פ: {{ business.business_id_number }}</p>
+                    </div>
+                </div>
+                
+                <div class="w-full md:w-auto">
+                    <a href="{{ url_for('create_contract') }}" class="w-full md:w-auto bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 text-base shadow-md">
+                        <i class="fas fa-file-signature text-lg"></i>
+                        <span>יצירת חוזה חדש</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- סטטיסטיקות -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- סה"כ חוזים -->
+            <div class="dashboard-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm mb-1">סה"כ חוזים</p>
+                        <p class="text-2xl font-bold text-gray-800 stat-number">{{ contracts|length }}</p>
+                    </div>
+                    <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-file-contract text-primary text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- חוזים חתומים -->
+            <div class="dashboard-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm mb-1">חוזים חתומים</p>
+                        <p class="text-2xl font-bold text-gray-800 stat-number">{{ contracts|selectattr('status', 'equalto', 'signed')|list|length }}</p>
+                    </div>
+                    <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ממתינים לחתימה -->
+            <div class="dashboard-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm mb-1">ממתינים לחתימה</p>
+                        <p class="text-2xl font-bold text-gray-800 stat-number">{{ contracts|selectattr('status', 'equalto', 'pending')|list|length }}</p>
+                    </div>
+                    <div class="h-12 w-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-amber-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- חוזים שפג תוקפם -->
+            <div class="dashboard-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm mb-1">פג תוקף</p>
+                        <p class="text-2xl font-bold text-gray-800 stat-number">{{ contracts|selectattr('status', 'equalto', 'expired')|list|length }}</p>
+                    </div>
+                    <div class="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-calendar-times text-red-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- רשימת חוזים -->
+        <div class="dashboard-card p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <h2 class="text-xl font-bold text-gray-800">רשימת החוזים</h2>
+                
+                <!-- מסנן חוזים -->
+                <div class="relative w-full md:w-auto">
+                    <select id="filter-status" class="bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-primary w-full md:w-auto">
+                        <option value="all">כל החוזים</option>
+                        <option value="pending">ממתינים לחתימה</option>
+                        <option value="signed">חתומים</option>
+                        <option value="expired">פג תוקף</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 text-gray-700">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            {% if contracts %}
+            <!-- תצוגת טבלה (דסקטופ) -->
+            <div class="contracts-table-view">
+                <div class="table-responsive">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">פרטי לקוח</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">תאריך</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">סטטוס</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for contract in contracts %}
+                            <tr class="contract-row" data-status="{{ contract.status }}">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ contract.customer_name or "לא צוין" }}</div>
+                                    {% if contract.customer_email or contract.customer_phone %}
+                                    <div class="text-sm text-gray-500">
+                                        {% if contract.customer_email %}
+                                        <span><i class="fas fa-envelope text-gray-400 mr-1"></i>{{ contract.customer_email }}</span>
+                                        {% endif %}
+                                        {% if contract.customer_phone %}
+                                        <span class="mr-2"><i class="fas fa-phone text-gray-400 mr-1"></i>{{ contract.customer_phone }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ contract.created_at if contract.created_at else "לא צוין" }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="status-badge {% if contract.status == 'signed' %}status-signed{% elif contract.status == 'pending' %}status-pending{% elif contract.status == 'expired' %}status-expired{% else %}status-draft{% endif %}">
+                                        {% if contract.status == 'signed' %}
+                                        חתום
+                                        {% elif contract.status == 'pending' %}
+                                        ממתין לחתימה
+                                        {% elif contract.status == 'expired' %}
+                                        פג תוקף
+                                        {% else %}
+                                        טיוטה
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <div class="flex space-x-3 space-x-reverse">
+                                        <a href="{{ url_for('view_contract', unique_url=contract.unique_url) }}" target="_blank" class="text-primary hover:text-primary-dark transition-colors" title="צפייה בחוזה">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        
+                                        {% if contract.customer_phone %}
+                                        <a href="https://wa.me/{{ contract.customer_phone|replace('-', '')|replace(' ', '') }}?text=אנא חתום על החוזה בקישור הבא: {{ request.host_url }}contract/{{ contract.unique_url }}" target="_blank" class="text-green-600 hover:text-green-700 transition-colors" title="שליחה בוואטסאפ">
+                                            <i class="fab fa-whatsapp"></i>
+                                        </a>
+                                        {% endif %}
+                                        
+                                        <button class="copy-link text-blue-600 hover:text-blue-700 transition-colors" data-url="{{ request.host_url }}contract/{{ contract.unique_url }}" title="העתקת קישור">
+                                            <i class="fas fa-link"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- תצוגת כרטיסיות (מובייל) -->
+            <div class="contracts-card-view">
+                {% for contract in contracts %}
+                <div class="contract-card contract-row {{ contract.status }}" data-status="{{ contract.status }}">
+                    <!-- סטטוס -->
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="status-badge {% if contract.status == 'signed' %}status-signed{% elif contract.status == 'pending' %}status-pending{% elif contract.status == 'expired' %}status-expired{% else %}status-draft{% endif %}">
+                            {% if contract.status == 'signed' %}
+                            חתום
+                            {% elif contract.status == 'pending' %}
+                            ממתין לחתימה
+                            {% elif contract.status == 'expired' %}
+                            פג תוקף
+                            {% else %}
+                            טיוטה
+                            {% endif %}
+                        </span>
+                        <span class="text-sm text-gray-500">{{ contract.created_at if contract.created_at else "לא צוין" }}</span>
+                    </div>
+                    
+                    <!-- פרטי לקוח -->
+                    <div class="card-section">
+                        <span class="card-label">פרטי לקוח</span>
+                        <div class="text-gray-900 font-medium">{{ contract.customer_name or "לא צוין" }}</div>
+                        <div class="flex flex-wrap gap-3 mt-1">
+                            {% if contract.customer_email %}
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-envelope text-gray-400 ml-1"></i>
+                                <span>{{ contract.customer_email }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if contract.customer_phone %}
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-phone text-gray-400 ml-1"></i>
+                                <span>{{ contract.customer_phone }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- פעולות -->
+                    <div class="card-section flex items-center justify-between">
+                        <span class="card-label">פעולות</span>
+                        <div class="flex gap-4">
+                            <a href="{{ url_for('view_contract', unique_url=contract.unique_url) }}" target="_blank" class="flex items-center justify-center w-9 h-9 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors" title="צפייה בחוזה">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            
+                            {% if contract.customer_phone %}
+                            <a href="https://wa.me/{{ contract.customer_phone|replace('-', '')|replace(' ', '') }}?text=אנא חתום על החוזה בקישור הבא: {{ request.host_url }}contract/{{ contract.unique_url }}" target="_blank" class="flex items-center justify-center w-9 h-9 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition-colors" title="שליחה בוואטסאפ">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            {% endif %}
+                            
+                            <button class="copy-link flex items-center justify-center w-9 h-9 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors" data-url="{{ request.host_url }}contract/{{ contract.unique_url }}" title="העתקת קישור">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% else %}
+            <div class="text-center py-12">
+                <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
+                    <i class="fas fa-file-contract text-5xl"></i>
+                </div>
+                <h3 class="mt-2 text-lg font-medium text-gray-900">אין לך חוזים עדיין</h3>
+                <p class="mt-1 text-sm text-gray-500">צור את החוזה הראשון שלך כדי להתחיל</p>
+                <div class="mt-6">
+                    <a href="{{ url_for('create_contract') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90">
+                        <i class="fas fa-plus mr-2"></i>
+                        יצירת חוזה חדש
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // מסנן סטטוס
+        const filterStatus = document.getElementById('filter-status');
+        const contractRows = document.querySelectorAll('.contract-row');
+        
+        if (filterStatus) {
+            filterStatus.addEventListener('change', function() {
+                const selectedStatus = this.value;
+                
+                contractRows.forEach(row => {
+                    const status = row.getAttribute('data-status');
+                    if (selectedStatus === 'all' || status === selectedStatus) {
+                        row.classList.remove('hidden');
+                    } else {
+                        row.classList.add('hidden');
+                    }
+                });
+            });
+        }
+        
+        // העתקת קישור
+        const copyButtons = document.querySelectorAll('.copy-link');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                navigator.clipboard.writeText(url).then(() => {
+                    // שינוי זמני של האייקון להצגת הצלחה
+                    const icon = this.querySelector('i');
+                    const originalClass = icon.className;
+                    icon.className = 'fas fa-check';
+                    
+                    // חזרה לאייקון המקורי
+                    setTimeout(() => {
+                        icon.className = originalClass;
+                    }, 2000);
+                });
+            });
+        });
+        
+        // אנימציה למספרים בסטטיסטיקה
+        const statNumbers = document.querySelectorAll('.stat-number');
+        statNumbers.forEach((stat, index) => {
+            stat.style.animationDelay = (0.2 * index) + 's';
+        });
+    });
+</script>
+{% endblock %} 

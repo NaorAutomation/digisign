@@ -1,0 +1,848 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- סקשן ראשי - Hero Section עם גרדיאנט חדש לשנת 2025 -->
+<section class="pt-16 md:pt-24 pb-20 px-4 md:px-8 relative overflow-hidden">
+    <!-- גרדיאנט מודרני 2025 ספציפי רק ל-Hero Section -->
+    <div class="absolute inset-0 bg-gradient-to-br from-[#0A2463] via-[#3E92CC] to-[#2EC4B6] opacity-90 z-[-1]"></div>
+    
+    <!-- אפקט רשת מודרני -->
+    <div class="absolute inset-0 z-[-1] opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\' viewBox=\'0 0 40 40\'%3E%3Cg fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.2\'%3E%3Cpath d=\'M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 20v-1.41l2.83-2.83 1.41 1.41L1.41 20H0zm20 0v-1.41l2.83-2.83 1.41 1.41L21.41 20H20zM0 0v1.41l2.83 2.83 1.41-1.41L1.41 0H0zm10 0v1.41l2.83 2.83 1.41-1.41L11.41 0H10zM20 0v1.41l2.83 2.83 1.41-1.41L21.41 0H20zm10 0v1.41l2.83 2.83 1.41-1.41L31.41 0H30zm10 0v1.41l2.83 2.83 1.41-1.41L41.41 0H40zm0 10v1.41l2.83 2.83 1.41-1.41L41.41 10H40zm0 10v1.41l2.83 2.83 1.41-1.41L41.41 20H40zm0 10v1.41l2.83 2.83 1.41-1.41L41.41 30H40zM30 10v1.41l2.83 2.83 1.41-1.41L31.41 10H30zm0 10v1.41l2.83 2.83 1.41-1.41L31.41 20H30zm0 10v1.41l2.83 2.83 1.41-1.41L31.41 30H30zM20 10v1.41l2.83 2.83 1.41-1.41L21.41 10H20zm0 10v1.41l2.83 2.83 1.41-1.41L21.41 20H20zm0 10v1.41l2.83 2.83 1.41-1.41L21.41 30H20zM10 10v1.41l2.83 2.83 1.41-1.41L11.41 10H10zm0 10v1.41l2.83 2.83 1.41-1.41L11.41 20H10zm0 10v1.41l2.83 2.83 1.41-1.41L11.41 30H10z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"></div>
+    
+    <div class="container mx-auto">
+        <div class="flex flex-col md:flex-row items-center gap-12">
+            <!-- טקסט ראשי -->
+            <div class="w-full md:w-1/2 hero-content">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
+                    חתימה דיגיטלית <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF9F1C] to-[#F6F7F8]">חכמה ומאובטחת</span>
+                </h1>
+                
+                <p class="text-lg md:text-xl text-white/90 mb-8 max-w-2xl">
+                    פתרון DigiSign מאפשר לעסקים להחתים את הלקוחות שלהם על מסמכים בצורה דיגיטלית, מאובטחת וחוקית מכל מקום ובכל זמן. <span class="font-bold text-[#FF9F1C]">כולל הכנת טפסים מותאמים אישית במיוחד לעסק שלך!</span> ללא צורך בהדפסה, סריקה או שליחה בדואר.
+                </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <a href="#business-login" class="px-8 py-3 bg-white text-[#0A2463] font-medium rounded-full shadow-lg hover:shadow-xl transition btn-glow">התחל עכשיו</a>
+                    <a href="#services" class="px-8 py-3 bg-white/10 backdrop-blur-sm text-white border border-white/20 font-medium rounded-full hover:bg-white/20 transition">איך זה עובד?</a>
+                </div>
+            </div>
+            
+            <!-- איור צף -->
+            <div class="w-full md:w-1/2 flex justify-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-[#2EC4B6]/30 rounded-full blur-3xl transform scale-75"></div>
+                    <img src="https://i.ibb.co/qYHvZyBc/Capture-removebg-preview-1.png" alt="חתימה דיגיטלית" class="w-full max-w-md relative z-10 floating">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- אלמנט עיצובי בתחתית ה-Hero -->
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#f8fafc] to-transparent"></div>
+</section>
+
+<!-- כניסת עסקים - עם רקע בהיר -->
+<section id="business-login" class="py-16 px-4 md:px-8 bg-[#f8fafc] text-dark-section">
+    <div class="container mx-auto">
+        <div class="max-w-3xl mx-auto">
+            <!-- כותרת הסקשן -->
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#0A2463] mb-4">כניסה והרשמת עסקים</h2>
+                <p class="text-lg text-gray-600">התחבר למערכת או הירשם כעסק חדש</p>
+            </div>
+            
+            <!-- כרטיסיית כניסה משופרת -->
+            <div class="bg-white rounded-2xl p-8 overflow-hidden reveal relative shadow-xl border border-gray-100">
+                
+                <!-- לשוניות משופרות -->
+                <div class="flex border-b-2 border-gray-200 mb-8 relative">
+                    <button id="login-tab" class="tab-btn py-4 px-5 font-bold text-primary relative border-b-2 border-primary text-lg">
+                        <span class="flex items-center">
+                            <i class="fas fa-sign-in-alt mr-2 text-xl"></i>
+                            כניסה
+                        </span>
+                        <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#0A2463] to-[#3E92CC] transform scale-x-100 origin-left transition-transform duration-300"></span>
+                    </button>
+                    <button id="register-tab" class="tab-btn py-4 px-5 font-bold text-gray-500 relative border-b-2 border-transparent text-lg">
+                        <span class="flex items-center">
+                            <i class="fas fa-user-plus mr-2 text-xl"></i>
+                            הרשמה
+                        </span>
+                        <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#0A2463] to-[#3E92CC] transform scale-x-0 origin-left transition-transform duration-300"></span>
+                    </button>
+                </div>
+                
+                <!-- טופס כניסה -->
+                <div id="login-form" class="tab-content bg-white p-6 rounded-lg" style="display:block; opacity:1;">
+                    <form action="/business/auth" method="POST">
+                        <div class="mb-6">
+                            <label for="business_id_number" class="block text-gray-800 text-base font-bold mb-3">
+                                <span class="flex items-center">
+                                    <i class="fas fa-building text-primary mr-2 text-lg"></i>
+                                    מספר ח.פ / עוסק מורשה
+                                </span>
+                            </label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-600 group-focus-within:text-primary transition-colors">
+                                    <i class="fas fa-id-card text-lg"></i>
+                                </div>
+                                <input type="text" id="business_id_number" name="business_id_number" 
+                                    class="bg-white border-2 border-gray-400 text-gray-900 text-lg rounded-lg focus:ring-2 focus:ring-primary/70 focus:border-primary block w-full pr-12 p-4 transition-all duration-200" 
+                                    required placeholder="הזן מספר ח.פ / עוסק מורשה">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 text-lg flex justify-center items-center gap-2 shadow-lg">
+                            <span class="relative z-10">כניסה למערכת</span>
+                            <i class="fas fa-arrow-left relative z-10"></i>
+                        </button>
+                        
+                        <div class="text-center mt-8 pt-6 border-t-2 border-gray-200">
+                            <p class="text-gray-800 mb-3 text-base">עדיין אין לעסק שלך חשבון?</p>
+                            <button type="button" id="switch-to-register" class="text-primary hover:text-primary/80 font-bold inline-flex items-center gap-2 transition-colors text-base">
+                                <span>הרשם עכשיו</span>
+                                <i class="fas fa-long-arrow-alt-left"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- טופס הרשמה -->
+                <div id="register-form" class="tab-content bg-white p-6 rounded-lg" style="display:none;">
+                    <form action="/business/register" method="POST" enctype="multipart/form-data">
+                        <!-- מספר ח.פ / עוסק מורשה -->
+                        <div class="mb-5">
+                            <label for="reg_business_id_number" class="block text-gray-800 text-base font-bold mb-3">
+                                <span class="flex items-center">
+                                    <i class="fas fa-id-card text-primary mr-2 text-lg"></i>
+                                    מספר ח.פ / עוסק מורשה
+                                    <span class="text-red-500 mr-1">*</span>
+                                </span>
+                            </label>
+                            <input type="text" id="reg_business_id_number" name="business_id_number" 
+                                class="bg-white border-2 border-gray-400 text-gray-900 text-lg rounded-lg focus:ring-2 focus:ring-primary/70 focus:border-primary block w-full p-4 transition-all duration-200" 
+                                required>
+                        </div>
+                        
+                        <!-- שם העסק -->
+                        <div class="mb-5">
+                            <label for="business_name" class="block text-gray-800 text-base font-bold mb-3">
+                                <span class="flex items-center">
+                                    <i class="fas fa-store text-primary mr-2 text-lg"></i>
+                                    שם העסק
+                                    <span class="text-red-500 mr-1">*</span>
+                                </span>
+                            </label>
+                            <input type="text" id="business_name" name="business_name" 
+                                class="bg-white border-2 border-gray-400 text-gray-900 text-lg rounded-lg focus:ring-2 focus:ring-primary/70 focus:border-primary block w-full p-4 transition-all duration-200" 
+                                required>
+                        </div>
+                        
+                        <!-- פרטי קשר -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                            <div>
+                                <label for="contact_name" class="block text-gray-800 text-base font-bold mb-3">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user text-primary mr-2 text-lg"></i>
+                                        איש קשר
+                                    </span>
+                                </label>
+                                <input type="text" id="contact_name" name="contact_name" 
+                                    class="bg-white border-2 border-gray-400 text-gray-900 text-lg rounded-lg focus:ring-2 focus:ring-primary/70 focus:border-primary block w-full p-4 transition-all duration-200">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-800 text-base font-bold mb-3">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-envelope text-primary mr-2 text-lg"></i>
+                                        דוא"ל
+                                    </span>
+                                </label>
+                                <input type="email" id="email" name="email" 
+                                    class="bg-white border-2 border-gray-400 text-gray-900 text-lg rounded-lg focus:ring-2 focus:ring-primary/70 focus:border-primary block w-full p-4 transition-all duration-200">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                            <div>
+                                <label for="phone" class="block text-gray-800 text-base font-bold mb-3">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-phone text-primary mr-2 text-lg"></i>
+                                        טלפון
+                                    </span>
+                                </label>
+                                <input type="tel" id="phone" name="phone" 
+                                    class="bg-white border-2 border-gray-400 text-gray-900 text-lg rounded-lg focus:ring-2 focus:ring-primary/70 focus:border-primary block w-full p-4 transition-all duration-200">
+                            </div>
+                            <div>
+                                <label for="address" class="block text-gray-800 text-base font-bold mb-3">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-map-marker-alt text-primary mr-2 text-lg"></i>
+                                        כתובת
+                                    </span>
+                                </label>
+                                <input type="text" id="address" name="address" 
+                                    class="bg-white border-2 border-gray-400 text-gray-900 text-lg rounded-lg focus:ring-2 focus:ring-primary/70 focus:border-primary block w-full p-4 transition-all duration-200">
+                            </div>
+                        </div>
+                        
+                        <!-- לוגו העסק -->
+                        <div class="mb-6">
+                            <label for="logo" class="block text-gray-800 text-base font-bold mb-3">
+                                <span class="flex items-center">
+                                    <i class="fas fa-image text-primary mr-2 text-lg"></i>
+                                    לוגו העסק
+                                </span>
+                            </label>
+                            <div class="flex items-center justify-center w-full">
+                                <label for="logo" class="flex flex-col items-center justify-center w-full h-36 border-2 border-gray-400 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-200">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <div class="w-14 h-14 mb-3 rounded-full bg-primary/20 flex items-center justify-center">
+                                            <i class="fas fa-cloud-upload-alt text-primary text-2xl"></i>
+                                        </div>
+                                        <p class="mb-2 text-base text-gray-800 font-bold">לחץ להעלאת לוגו</p>
+                                        <p class="text-sm text-gray-600">SVG, PNG, JPG או GIF (מקסימום 2MB)</p>
+                                    </div>
+                                    <input id="logo" type="file" name="logo" class="hidden" accept="image/*" />
+                                </label>
+                            </div> 
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 text-lg flex justify-center items-center gap-2 shadow-lg">
+                            <span class="relative z-10">הרשמה</span>
+                            <i class="fas fa-user-plus relative z-10"></i>
+                        </button>
+                        
+                        <div class="text-center mt-8 pt-6 border-t-2 border-gray-200">
+                            <p class="text-gray-800 mb-3 text-base">כבר יש לך חשבון?</p>
+                            <button type="button" id="switch-to-login" class="text-primary hover:text-primary/80 font-bold inline-flex items-center gap-2 transition-colors text-base">
+                                <span>התחבר עכשיו</span>
+                                <i class="fas fa-long-arrow-alt-left"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- איך זה עובד - עם רקע אפור בהיר -->
+<section id="services" class="py-16 px-4 md:px-8 relative bg-gray-50">
+    <div class="container mx-auto">
+        <!-- כותרת הסקשן -->
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#0A2463] mb-4">איך DigiSign עובד?</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">תהליך פשוט ב-3 שלבים להפיכת המסמכים שלך לדיגיטליים</p>
+        </div>
+        
+        <!-- שלבים -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            <!-- שלב 1 -->
+            <div class="glass-card rounded-xl p-6 text-center reveal shadow-lg">
+                <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-[#0A2463]/10 flex items-center justify-center text-[#0A2463] text-2xl">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">העלאת המסמך</h3>
+                <p class="text-gray-600">העלה מסמך PDF או צור מסמך חדש ישירות במערכת שלנו.</p>
+            </div>
+            
+            <!-- שלב 2 -->
+            <div class="glass-card rounded-xl p-6 text-center reveal shadow-lg">
+                <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-[#3E92CC]/10 flex items-center justify-center text-[#3E92CC] text-2xl">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">שליחה לחתימה</h3>
+                <p class="text-gray-600">שלח ללקוחות שלך קישור ייחודי לחתימה דרך מייל, SMS או WhatsApp.</p>
+            </div>
+            
+            <!-- שלב 3 -->
+            <div class="glass-card rounded-xl p-6 text-center reveal shadow-lg">
+                <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-[#2EC4B6]/10 flex items-center justify-center text-[#2EC4B6] text-2xl">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">מסמך חתום</h3>
+                <p class="text-gray-600">קבל התראה כשהמסמך נחתם ואחסן את כל המסמכים החתומים במקום אחד.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- מחירון - עם רקע גרדיאנט עדין -->
+<section id="pricing" class="py-20 px-4 md:px-8 relative bg-gradient-to-b from-gray-50 to-white">
+    <div class="container mx-auto max-w-6xl">
+        <!-- כותרת הסקשן -->
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#0A2463] mb-4">תוכניות מחירים</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">בחר את התוכנית המתאימה לצרכי העסק שלך</p>
+        </div>
+        
+        <!-- חבילות מחירים -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-6">
+            <!-- חבילה בסיסית -->
+            <div class="glass-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 reveal">
+                <div class="p-8 relative">
+                    <!-- ריבוע דקורטיבי -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-[#0A2463]/5 rounded-full -mr-16 -mt-16"></div>
+                    
+                    <div class="relative">
+                        <h3 class="text-2xl font-bold text-[#0A2463] mb-2">בסיסי</h3>
+                        <p class="text-gray-600 mb-6">מיועד לעסקים קטנים וליחידים</p>
+                        
+                        <div class="flex items-end mb-6">
+                            <span class="text-4xl font-bold text-[#0A2463]">חינם</span>
+                            <span class="text-gray-500 ml-2 mb-1">/לחודש</span>
+                        </div>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">עד 5 חתימות בחודש</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">2 טפסים</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">אימות חתימה בסיסי</span>
+                            </li>
+                            <li class="flex items-center opacity-50">
+                                <i class="fas fa-times-circle text-gray-400 mr-2"></i>
+                                <span class="text-gray-500">חתימות מרובות</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="#contact" class="block w-full py-3 px-4 bg-white border-2 border-[#0A2463] text-[#0A2463] rounded-lg text-center font-bold transition hover:bg-[#0A2463] hover:text-white">
+                            התחל עכשיו
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- חבילת פרו - מודגשת -->
+            <div class="glass-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 reveal relative border-2 border-[#3E92CC] shadow-lg transform md:scale-105 z-10">
+                <!-- תג פופולרי -->
+                <div class="absolute top-0 right-0 bg-[#FF9F1C] text-white text-sm font-bold py-1 px-4 rounded-bl-lg">
+                    הכי פופולרי
+                </div>
+                
+                <div class="p-8 relative">
+                    <!-- ריבוע דקורטיבי -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-[#3E92CC]/10 rounded-full -mr-16 -mt-16"></div>
+                    
+                    <div class="relative">
+                        <h3 class="text-2xl font-bold text-[#3E92CC] mb-2">פרו</h3>
+                        <p class="text-gray-600 mb-6">מיועד לעסקים בינוניים</p>
+                        
+                        <div class="flex items-end mb-6">
+                            <span class="text-4xl font-bold text-[#3E92CC]">₪39</span>
+                            <span class="text-gray-500 ml-2 mb-1">/לחודש</span>
+                        </div>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">עד 100 חתימות בחודש</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">50 טפסים</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">אימות מתקדם עם זיהוי משתמש</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">חתימות מרובות</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="#contact" class="block w-full py-3 px-4 bg-[#3E92CC] text-white rounded-lg text-center font-bold transition hover:bg-[#0A2463]">
+                            לקבלת הצעה
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- חבילת אולטימייט -->
+            <div class="glass-card rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 reveal">
+                <div class="p-8 relative">
+                    <!-- ריבוע דקורטיבי -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-[#2EC4B6]/10 rounded-full -mr-16 -mt-16"></div>
+                    
+                    <div class="relative">
+                        <h3 class="text-2xl font-bold text-[#2EC4B6] mb-2">אולטימייט</h3>
+                        <p class="text-gray-600 mb-6">מיועד לעסקים גדולים וארגונים</p>
+                        
+                        <div class="flex items-end mb-6">
+                            <span class="text-4xl font-bold text-[#2EC4B6]">₪99</span>
+                            <span class="text-gray-500 ml-2 mb-1">/לחודש</span>
+                        </div>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">חתימות ללא הגבלה</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">טפסים ללא הגבלה</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">אימות מתקדם עם זיהוי ביומטרי</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-[#2EC4B6] mr-2"></i>
+                                <span class="text-gray-600">ניהול צוות ותפקידים מורחב</span>
+                            </li>
+                        </ul>
+                        
+                        <a href="#contact" class="block w-full py-3 px-4 bg-[#2EC4B6] text-white rounded-lg text-center font-bold transition hover:bg-[#0A2463]">
+                            לקבלת הצעה
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- הערה לגבי התוכניות -->
+        <div class="text-center mt-12 text-gray-500 reveal">
+            <p>* המחירים אינם כוללים מע"מ. ניתן לקבל הצעת מחיר מותאמת אישית לפי דרישות העסק.</p>
+            <a href="#contact" class="text-[#3E92CC] font-bold hover:text-[#0A2463] transition mt-2 inline-block">צור קשר לקבלת מידע נוסף</a>
+        </div>
+    </div>
+</section>
+
+<!-- יתרונות המערכת - עם רקע לבן -->
+<section class="py-16 px-4 md:px-8 bg-white">
+    <div class="container mx-auto">
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#0A2463] mb-4">למה לבחור ב-DigiSign?</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">הפתרון המושלם לחתימות דיגיטליות בעידן הדיגיטלי</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- יתרון 1 -->
+            <div class="glass-card rounded-xl p-6 hover:shadow-xl transition reveal">
+                <i class="fas fa-shield-alt text-[#0A2463] text-3xl mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">מאובטח לחלוטין</h3>
+                <p class="text-gray-600">הצפנה מתקדמת ואימות זהות לאבטחה מקסימלית של המסמכים.</p>
+            </div>
+            
+            <!-- יתרון 2 -->
+            <div class="glass-card rounded-xl p-6 hover:shadow-xl transition reveal">
+                <i class="fas fa-bolt text-[#FF9F1C] text-3xl mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">מהיר ויעיל</h3>
+                <p class="text-gray-600">השלם תהליכי חתימה תוך דקות במקום ימים או שבועות.</p>
+            </div>
+            
+            <!-- יתרון 3 -->
+            <div class="glass-card rounded-xl p-6 hover:shadow-xl transition reveal">
+                <i class="fas fa-gavel text-[#3E92CC] text-3xl mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">תוקף משפטי מלא</h3>
+                <p class="text-gray-600">חתימות תקפות משפטית עם חותמת זמן ותיעוד מלא של התהליך.</p>
+            </div>
+            
+            <!-- יתרון 4 -->
+            <div class="glass-card rounded-xl p-6 hover:shadow-xl transition reveal">
+                <i class="fas fa-mobile-alt text-[#2EC4B6] text-3xl mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">נגיש מכל מקום</h3>
+                <p class="text-gray-600">חתום ושלח מסמכים מכל מכשיר - מחשב, טאבלט או סמארטפון.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- צור קשר - גרסה משופרת עם אייקונים ואלמנטים אינטראקטיביים -->
+<section id="contact" class="py-20 px-4 md:px-8 relative overflow-hidden">
+    <!-- רקע אבסטרקטי -->
+    <div class="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#f8fafc] to-white opacity-70"></div>
+    <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#f8fafc] to-white opacity-70"></div>
+    
+    <!-- אלמנטים דקורטיביים מרחפים -->
+    <div class="absolute top-20 left-10 w-32 h-32 bg-[#3E92CC]/10 rounded-full blur-2xl animate-pulse"></div>
+    <div class="absolute bottom-20 right-10 w-40 h-40 bg-[#2EC4B6]/10 rounded-full blur-2xl animate-pulse"></div>
+    <div class="absolute top-1/2 right-1/4 w-24 h-24 bg-[#FF9F1C]/10 rounded-full blur-2xl animate-pulse"></div>
+    
+    <div class="container mx-auto max-w-5xl relative z-10">
+        <!-- כותרת הסקשן - מעודכנת עם אייקונים -->
+        <div class="text-center mb-12 reveal">
+            <div class="inline-block p-4 bg-[#0A2463]/10 rounded-full mb-4">
+                <i class="fas fa-comments text-3xl text-[#0A2463]"></i>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-[#0A2463] mb-4">רוצים להתחיל? נשמח לעזור לכם!</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">צרו איתנו קשר עכשיו וקבלו ייעוץ אישי <span class="font-bold text-[#3E92CC]">חינם</span> להתאמת הפתרון המושלם לעסק שלכם</p>
+        </div>
+        
+        <!-- קריאה לפעולה מרכזית -->
+        <div class="glass-card rounded-2xl p-8 shadow-xl relative overflow-hidden mb-16 border-2 border-[#3E92CC]/20 reveal">
+            <!-- רקע דקורטיבי לכרטיס -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#3E92CC]/10 to-transparent rounded-full -mr-32 -mt-32"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#2EC4B6]/10 to-transparent rounded-full -ml-32 -mb-32"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-8 relative">
+                <!-- מידע יצירת קשר - 2 עמודות -->
+                <div class="md:col-span-2 flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold text-[#0A2463] mb-6">דברו איתנו!</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- אפשרויות קשר עם אייקונים גדולים ואינטראקטיביים -->
+                        <a href="https://wa.me/972546358258" target="_blank" rel="noopener" class="flex items-center p-3 rounded-xl transition-all hover:bg-[#25D366]/10 group">
+                            <div class="w-12 h-12 bg-[#25D366] rounded-full flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fab fa-whatsapp text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">WhatsApp</h4>
+                                <p class="text-gray-600">שליחת הודעה מיידית</p>
+                            </div>
+                            <i class="fas fa-chevron-left ml-auto text-[#25D366] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
+                        
+                        <a href="tel:+972546358258" class="flex items-center p-3 rounded-xl transition-all hover:bg-[#3E92CC]/10 group">
+                            <div class="w-12 h-12 bg-[#3E92CC] rounded-full flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-phone-alt text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">טלפון</h4>
+                                <p class="text-gray-600">054-635-8258</p>
+                            </div>
+                            <i class="fas fa-chevron-left ml-auto text-[#3E92CC] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
+                        
+                        <a href="mailto:naorbarzion@gmail.com" class="flex items-center p-3 rounded-xl transition-all hover:bg-[#FF9F1C]/10 group">
+                            <div class="w-12 h-12 bg-[#FF9F1C] rounded-full flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform">
+                                <i class="fas fa-envelope text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">אימייל</h4>
+                                <p class="text-gray-600">naorbarzion@gmail.com</p>
+                            </div>
+                            <i class="fas fa-chevron-left ml-auto text-[#FF9F1C] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
+                        
+                        <div class="flex items-center p-3 rounded-xl group">
+                            <div class="w-12 h-12 bg-[#2EC4B6] rounded-full flex items-center justify-center mr-4 shadow-lg">
+                                <i class="fas fa-user text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">נציג אישי</h4>
+                                <p class="text-gray-600">נאור בר ציון</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- טופס יצירת קשר - 3 עמודות -->
+                <div class="md:col-span-3">
+                    <h3 class="text-2xl font-bold text-[#0A2463] mb-6">השאירו פרטים ונחזור אליכם</h3>
+                    
+                    <form action="/contact" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- שם מלא -->
+                        <div class="md:col-span-1 relative group">
+                            <label for="name" class="block text-gray-700 font-medium mb-2">
+                                <i class="fas fa-user text-[#3E92CC] mr-1"></i> שם מלא
+                            </label>
+                            <input type="text" id="name" name="name" required
+                                class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3E92CC] focus:border-[#3E92CC] transition-all">
+                            <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3E92CC] group-focus-within:w-full transition-all duration-300"></div>
+                        </div>
+                        
+                        <!-- טלפון -->
+                        <div class="md:col-span-1 relative group">
+                            <label for="phone" class="block text-gray-700 font-medium mb-2">
+                                <i class="fas fa-phone text-[#3E92CC] mr-1"></i> טלפון
+                            </label>
+                            <input type="tel" id="phone" name="phone" required
+                                class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3E92CC] focus:border-[#3E92CC] transition-all">
+                            <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3E92CC] group-focus-within:w-full transition-all duration-300"></div>
+                        </div>
+                        
+                        <!-- אימייל -->
+                        <div class="md:col-span-1 relative group">
+                            <label for="email" class="block text-gray-700 font-medium mb-2">
+                                <i class="fas fa-envelope text-[#3E92CC] mr-1"></i> אימייל
+                            </label>
+                            <input type="email" id="email" name="email" required
+                                class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3E92CC] focus:border-[#3E92CC] transition-all">
+                            <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3E92CC] group-focus-within:w-full transition-all duration-300"></div>
+                        </div>
+                        
+                        <!-- חבילה מבוקשת -->
+                        <div class="md:col-span-1 relative group">
+                            <label for="package" class="block text-gray-700 font-medium mb-2">
+                                <i class="fas fa-box text-[#3E92CC] mr-1"></i> חבילה מבוקשת
+                            </label>
+                            <select id="package" name="package"
+                                class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3E92CC] focus:border-[#3E92CC] transition-all">
+                                <option value="basic">בסיסי</option>
+                                <option value="pro" selected>פרו (₪39/חודש)</option>
+                                <option value="ultimate">אולטימייט (₪99/חודש)</option>
+                                <option value="custom">מותאם אישית</option>
+                            </select>
+                            <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3E92CC] group-focus-within:w-full transition-all duration-300"></div>
+                        </div>
+                        
+                        <!-- הודעה -->
+                        <div class="md:col-span-2 relative group">
+                            <label for="message" class="block text-gray-700 font-medium mb-2">
+                                <i class="fas fa-comment text-[#3E92CC] mr-1"></i> הודעה
+                            </label>
+                            <textarea id="message" name="message" rows="4"
+                                class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3E92CC] focus:border-[#3E92CC] transition-all"></textarea>
+                            <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#3E92CC] group-focus-within:w-full transition-all duration-300"></div>
+                        </div>
+                        
+                        <!-- כפתור שליחה משופר -->
+                        <div class="md:col-span-2 text-center mt-4">
+                            <button type="submit" class="bg-[#0A2463] hover:bg-[#3E92CC] text-white font-bold py-4 px-10 rounded-xl transition-all shadow-lg relative overflow-hidden group">
+                                <span class="relative z-10 flex items-center justify-center">
+                                    <span>שליחה</span>
+                                    <i class="fas fa-paper-plane ml-2 group-hover:translate-x-1 transition-transform"></i>
+                                </span>
+                                <span class="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-r from-[#3E92CC] to-[#2EC4B6] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- יתרונות יצירת קשר -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="glass-card rounded-xl p-6 text-center reveal transition-all hover:shadow-lg hover:-translate-y-1">
+                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-[#FF9F1C]/10 flex items-center justify-center text-[#FF9F1C] text-2xl">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">מענה מהיר</h3>
+                <p class="text-gray-600">נחזור אליכם תוך זמן קצר ונעזור לכם להתחיל</p>
+            </div>
+            
+            <div class="glass-card rounded-xl p-6 text-center reveal transition-all hover:shadow-lg hover:-translate-y-1">
+                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-[#3E92CC]/10 flex items-center justify-center text-[#3E92CC] text-2xl">
+                    <i class="fas fa-file-signature"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">התאמה אישית</h3>
+                <p class="text-gray-600">נתאים לכם טפסים מיוחדים לצרכי העסק שלכם</p>
+            </div>
+            
+            <div class="glass-card rounded-xl p-6 text-center reveal transition-all hover:shadow-lg hover:-translate-y-1">
+                <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-[#2EC4B6]/10 flex items-center justify-center text-[#2EC4B6] text-2xl">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">תמיכה אישית</h3>
+                <p class="text-gray-600">ליווי וסיוע בכל שלב של תהליך החתימה</p>
+            </div>
+        </div>
+        
+        <!-- באנר סוגר עם קריאה לפעולה -->
+        <div class="bg-gradient-to-r from-[#0A2463] to-[#3E92CC] rounded-2xl p-8 text-center text-white reveal shadow-xl">
+            <h3 class="text-2xl font-bold mb-4">מוכנים להפוך את העסק שלכם לדיגיטלי?</h3>
+            <p class="mb-6 text-white/90">התחילו עוד היום עם DigiSign ותיהנו מחתימות מהירות, מאובטחות ומותאמות אישית</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://wa.me/972546358258" target="_blank" rel="noopener" class="flex items-center bg-[#25D366] hover:bg-[#25D366]/90 text-white rounded-lg px-6 py-3 transition shadow-lg">
+                    <i class="fab fa-whatsapp text-xl mr-2"></i>
+                    <span>צרו קשר בוואטסאפ</span>
+                </a>
+                <a href="tel:+972546358258" class="flex items-center bg-white hover:bg-white/90 text-[#0A2463] rounded-lg px-6 py-3 transition shadow-lg">
+                    <i class="fas fa-phone-alt mr-2"></i>
+                    <span>התקשרו עכשיו</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ניהול לשוניות כניסה והרשמה
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+        const loginFormDiv = document.getElementById('login-form');
+        const registerFormDiv = document.getElementById('register-form');
+        const switchToRegister = document.getElementById('switch-to-register');
+        const switchToLogin = document.getElementById('switch-to-login');
+        
+        console.log('טעינת הדף הושלמה', {
+            loginTab: !!loginTab, 
+            registerTab: !!registerTab, 
+            loginFormDiv: !!loginFormDiv, 
+            registerFormDiv: !!registerFormDiv
+        });
+        
+        // וידוא שטופס הכניסה תמיד מוצג בהתחלה
+        if (loginFormDiv) {
+            loginFormDiv.style.display = 'block';
+            loginFormDiv.style.opacity = '1';
+            loginFormDiv.classList.remove('hidden');
+            console.log('וידוא הצגת טופס כניסה בהתחלה');
+        }
+        
+        if (registerFormDiv) {
+            registerFormDiv.style.display = 'none';
+            console.log('וידוא הסתרת טופס הרשמה בהתחלה');
+        }
+        
+        // פונקציה למעבר לטופס כניסה
+        function showLoginForm() {
+            // עדכון סגנון כפתורים
+            loginTab.classList.add('text-primary', 'border-primary');
+            loginTab.classList.remove('text-gray-500', 'border-transparent');
+            registerTab.classList.remove('text-primary', 'border-primary');
+            registerTab.classList.add('text-gray-500', 'border-transparent');
+            
+            // עדכון קו תחתון
+            loginTab.querySelector('span:last-child').classList.remove('scale-x-0');
+            loginTab.querySelector('span:last-child').classList.add('scale-x-100');
+            registerTab.querySelector('span:last-child').classList.add('scale-x-0');
+            registerTab.querySelector('span:last-child').classList.remove('scale-x-100');
+            
+            // הצגת/הסתרת טפסים
+            loginFormDiv.style.display = 'block';
+            registerFormDiv.style.display = 'none';
+            
+            console.log('הצגת טופס כניסה');
+        }
+        
+        // פונקציה למעבר לטופס הרשמה
+        function showRegisterForm() {
+            // עדכון סגנון כפתורים
+            registerTab.classList.add('text-primary', 'border-primary');
+            registerTab.classList.remove('text-gray-500', 'border-transparent');
+            loginTab.classList.remove('text-primary', 'border-primary');
+            loginTab.classList.add('text-gray-500', 'border-transparent');
+            
+            // עדכון קו תחתון
+            registerTab.querySelector('span:last-child').classList.remove('scale-x-0');
+            registerTab.querySelector('span:last-child').classList.add('scale-x-100');
+            loginTab.querySelector('span:last-child').classList.add('scale-x-0');
+            loginTab.querySelector('span:last-child').classList.remove('scale-x-100');
+            
+            // הצגת/הסתרת טפסים
+            registerFormDiv.style.display = 'block';
+            loginFormDiv.style.display = 'none';
+            
+            console.log('הצגת טופס הרשמה');
+        }
+        
+        if (loginTab && registerTab && loginFormDiv && registerFormDiv) {
+            // לחיצה על לשונית כניסה
+            loginTab.addEventListener('click', function() {
+                console.log('לחיצה על לשונית כניסה');
+                showLoginForm();
+            });
+            
+            // לחיצה על לשונית הרשמה
+            registerTab.addEventListener('click', function() {
+                console.log('לחיצה על לשונית הרשמה');
+                showRegisterForm();
+            });
+            
+            // מעבר לרישום מתוך טופס כניסה
+            if (switchToRegister) {
+                switchToRegister.addEventListener('click', function() {
+                    console.log('מעבר להרשמה מכפתור בטופס כניסה');
+                    showRegisterForm();
+                });
+            }
+            
+            // מעבר לכניסה מתוך טופס רישום
+            if (switchToLogin) {
+                switchToLogin.addEventListener('click', function() {
+                    console.log('מעבר לכניסה מכפתור בטופס הרשמה');
+                    showLoginForm();
+                });
+            }
+            
+            // הוספת אנימציה ראשונית
+            gsap.from('.tab-btn', {
+                y: -20,
+                opacity: 0,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: 'power2.out',
+                delay: 0.2
+            });
+            
+            // אנימציות והתנועות
+            if (typeof gsap !== 'undefined') {
+                // אנימציית צף לתמונה
+                gsap.to('.floating', {
+                    y: 15,
+                    duration: 2,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: 'power1.inOut'
+                });
+                
+                // טיפול באלמנטים שמופיעים בגלילה
+                gsap.utils.toArray('.reveal').forEach(function(elem) {
+                    gsap.set(elem, { 
+                        y: 50,
+                        opacity: 0
+                    });
+                    
+                    ScrollTrigger.create({
+                        trigger: elem,
+                        start: 'top 80%',
+                        onEnter: () => {
+                            gsap.to(elem, {
+                                y: 0,
+                                opacity: 1,
+                                duration: 0.8,
+                                ease: 'power3.out'
+                            });
+                        },
+                        once: true
+                    });
+                });
+            }
+            
+            // הצגת שם קובץ בעת העלאת לוגו
+            const logoInput = document.getElementById('logo');
+            if (logoInput) {
+                logoInput.addEventListener('change', function() {
+                    const fileName = this.files[0]?.name;
+                    if (fileName) {
+                        const fileNameDisplay = this.parentElement.querySelector('p.mb-2');
+                        if (fileNameDisplay) {
+                            fileNameDisplay.textContent = fileName;
+                        }
+                    }
+                });
+            }
+            
+            // טיפול בטפסים והודעות
+            const loginFormElement = document.querySelector('#login-form form');
+            if (loginFormElement) {
+                loginFormElement.addEventListener('submit', function(e) {
+                    const businessId = document.getElementById('business_id_number').value;
+                    if (!businessId.trim()) {
+                        e.preventDefault();
+                        showAlert('נא להזין מספר ח.פ / עוסק מורשה', 'error');
+                    }
+                });
+            }
+            
+            const registerFormElement = document.querySelector('#register-form form');
+            if (registerFormElement) {
+                registerFormElement.addEventListener('submit', function(e) {
+                    const businessIdNumber = document.getElementById('reg_business_id_number').value;
+                    const businessName = document.getElementById('business_name').value;
+                    
+                    if (!businessIdNumber.trim() || !businessName.trim()) {
+                        e.preventDefault();
+                        showAlert('יש למלא את כל שדות החובה המסומנים בכוכבית', 'error');
+                    }
+                });
+            }
+        } else {
+            console.error('לא נמצאו כל האלמנטים הנדרשים לניהול הלשוניות');
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,905 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<style>
+    /* סגנונות ספציפיים ליצירת חוזה */
+    .contract-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-section {
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-section:last-of-type {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .tab-active {
+        background-color: #4f46e5;
+        color: white;
+    }
+    
+    .tab-inactive {
+        background-color: #f3f4f6;
+        color: #4b5563;
+    }
+    
+    /* אזור העריכה */
+    .rich-text-area {
+        min-height: 300px;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        font-family: 'Rubik', sans-serif;
+        font-size: 1rem;
+        line-height: 1.5;
+        direction: rtl;
+        text-align: right;
+        resize: vertical;
+        width: 100%;
+        transition: border-color 0.2s;
+    }
+    
+    .rich-text-area:focus {
+        border-color: #4f46e5;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    
+    /* העלאת קבצים */
+    .file-upload {
+        border: 2px dashed #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .file-upload:hover {
+        border-color: #4f46e5;
+        background-color: rgba(79, 70, 229, 0.03);
+    }
+    
+    /* טופס מותאם */
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    /* סגנונות לתבניות החוזה */
+    .template-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .template-card {
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    
+    .template-card:hover {
+        border-color: #4f46e5;
+        background-color: rgba(79, 70, 229, 0.05);
+    }
+    
+    .template-card.selected {
+        border-color: #4f46e5;
+        background-color: rgba(79, 70, 229, 0.1);
+    }
+    
+    .template-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #4f46e5;
+    }
+    
+    /* סרגל כלים בסיסי */
+    .text-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+    }
+    
+    .toolbar-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.25rem;
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        color: #374151;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .toolbar-btn:hover {
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
+    }
+    
+    .toolbar-divider {
+        width: 1px;
+        height: 2.5rem;
+        background-color: #e5e7eb;
+        margin: 0 0.25rem;
+    }
+    
+    /* עיצוב לסעיפים ממוספרים */
+    .numbered-paragraph {
+        padding-right: 20px;
+        position: relative;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+    
+    /* סעיפים מספריים */
+    .section-numeric {
+        font-weight: 600;
+    }
+    
+    /* סעיפים עם אותיות */
+    .section-letter {
+        font-weight: 600;
+    }
+    
+    /* סעיפי משנה */
+    .subsection {
+        padding-right: 30px;
+        font-weight: normal;
+    }
+    
+    /* טקסט מודגש בתוך החוזה */
+    .rich-text-area strong, 
+    .rich-text-area b {
+        font-weight: 700;
+        color: #333;
+    }
+    
+    /* עיצוב למקום חתימה */
+    .signature-place {
+        border-top: 1px solid #ccc;
+        margin-top: 20px;
+        padding-top: 10px;
+        font-style: italic;
+    }
+    
+    /* עיצוב לטבלאות שחולצו */
+    .extracted-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        direction: rtl;
+    }
+    
+    .extracted-table td, .extracted-table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: right;
+    }
+    
+    .extracted-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    
+    /* ניצול מלא של רוחב העורך */
+    .rich-text-area table {
+        width: 100%;
+    }
+    
+    /* עיצוב כותרות */
+    .rich-text-area h1, .rich-text-area h2, .rich-text-area h3 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .rich-text-area h1 {
+        font-size: 1.8em;
+    }
+    
+    .rich-text-area h2 {
+        font-size: 1.5em;
+    }
+    
+    .rich-text-area h3 {
+        font-size: 1.2em;
+    }
+    
+    /* עיצוב פסקאות */
+    .rich-text-area p {
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- יצירת חוזה חדש -->
+<section class="py-8 md:py-12 px-4 md:px-8">
+    <div class="container mx-auto max-w-4xl">
+        <!-- כותרת הדף -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">יצירת חוזה חדש</h1>
+            <p class="text-white/80 text-lg">צור חוזה חדש להחתמת לקוחות</p>
+        </div>
+        
+        <!-- טופס יצירת חוזה -->
+        <div class="contract-card p-6 md:p-8">
+            <form action="{{ url_for('create_contract') }}" method="POST" enctype="multipart/form-data" id="contract-form">
+                
+                <!-- סוג החוזה - לשוניות -->
+                <div class="form-section">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">סוג החוזה</h2>
+                    
+                    <!-- שדה נסתר לשמירת סוג החוזה -->
+                    <input type="hidden" name="contract_type" id="contract_type_field" value="file">
+                    
+                    <div class="flex rounded-lg overflow-hidden mb-6">
+                        <button type="button" id="tab-file" class="tab-active w-1/2 py-3 px-4 font-medium text-center transition-colors">
+                            <i class="fas fa-file mr-2"></i>
+                            העלאת מסמך
+                        </button>
+                        <button type="button" id="tab-text" class="tab-inactive w-1/2 py-3 px-4 font-medium text-center transition-colors">
+                            <i class="fas fa-file-alt mr-2"></i>
+                            יצירת מסמך טקסט
+                        </button>
+                    </div>
+                    
+                    <!-- אזור העלאת קובץ -->
+                    <div id="upload-section" class="transition-all">
+                        <div class="file-upload" id="drop-area">
+                            <input type="file" name="document" id="document-input" class="hidden" accept=".pdf,.docx,.doc,.txt,.rtf">
+                            <div id="upload-placeholder">
+                                <div class="mx-auto h-16 w-16 text-gray-400 mb-3">
+                                    <i class="fas fa-file-upload text-4xl"></i>
+                                </div>
+                                <p class="text-base font-medium text-gray-800">גרור קובץ לכאן או <span class="text-primary cursor-pointer">לחץ לבחירת קובץ</span></p>
+                                <p class="text-sm text-gray-500 mt-2">קבצים מותרים: PDF, DOCX, DOC, TXT, RTF. גודל מקסימלי: 10MB</p>
+                            </div>
+                            <div id="upload-preview" class="hidden">
+                                <div class="flex items-center">
+                                    <div class="text-primary mr-3">
+                                        <i id="file-icon" class="fas fa-file-pdf text-3xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p id="filename" class="text-base font-medium text-gray-800 text-right"></p>
+                                        <p id="filesize" class="text-sm text-gray-500"></p>
+                                    </div>
+                                    <button type="button" id="remove-file" class="text-red-500 ml-3">
+                                        <i class="fas fa-times-circle text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- כפתור לחילוץ טקסט -->
+                        <div class="mt-4">
+                            <button type="button" id="extract-text-btn" class="w-full bg-blue-100 hover:bg-blue-200 text-primary font-medium py-3 px-4 rounded-lg transition-all flex justify-center items-center gap-2 border border-blue-200">
+                                <i class="fas fa-magic mr-2"></i>
+                                חלץ טקסט מהמסמך ועבור לעריכה
+                            </button>
+                            <div id="extraction-loading" class="text-center py-3 hidden">
+                                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                                <p class="mt-2 text-gray-700">מחלץ טקסט מהמסמך...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- אזור יצירת תוכן טקסט -->
+                    <div id="text-section" class="hidden transition-all">
+                        <div class="mb-4">
+                            <h3 class="form-label">בחר תבנית חוזה (אופציונלי)</h3>
+                            <div class="template-selector">
+                                <div class="template-card" data-template="empty">
+                                    <div class="template-icon"><i class="fas fa-file"></i></div>
+                                    <div class="template-name">דף ריק</div>
+                                </div>
+                                <div class="template-card" data-template="employment">
+                                    <div class="template-icon"><i class="fas fa-briefcase"></i></div>
+                                    <div class="template-name">חוזה העסקה</div>
+                                </div>
+                                <div class="template-card" data-template="service">
+                                    <div class="template-icon"><i class="fas fa-handshake"></i></div>
+                                    <div class="template-name">הסכם שירות</div>
+                                </div>
+                                <div class="template-card" data-template="nda">
+                                    <div class="template-icon"><i class="fas fa-user-secret"></i></div>
+                                    <div class="template-name">הסכם סודיות</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <label for="text_content" class="form-label">תוכן החוזה</label>
+                        <!-- סרגל כלים בסיסי מובנה -->
+                        <div class="text-toolbar">
+                            <!-- פורמט טקסט בסיסי -->
+                            <button type="button" class="toolbar-btn" onclick="formatText('bold')" title="מודגש">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatText('italic')" title="מוטה">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatText('underline')" title="קו תחתון">
+                                <i class="fas fa-underline"></i>
+                            </button>
+                            
+                            <span class="toolbar-divider"></span>
+                            
+                            <!-- יישור טקסט -->
+                            <button type="button" class="toolbar-btn" onclick="formatText('justifyRight')" title="יישור לימין">
+                                <i class="fas fa-align-right"></i>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatText('justifyCenter')" title="יישור למרכז">
+                                <i class="fas fa-align-center"></i>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatText('justifyLeft')" title="יישור לשמאל">
+                                <i class="fas fa-align-left"></i>
+                            </button>
+                            
+                            <span class="toolbar-divider"></span>
+                            
+                            <!-- רשימות -->
+                            <button type="button" class="toolbar-btn" onclick="formatText('insertUnorderedList')" title="רשימה עם נקודות">
+                                <i class="fas fa-list-ul"></i>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatText('insertOrderedList')" title="רשימה ממוספרת">
+                                <i class="fas fa-list-ol"></i>
+                            </button>
+                            
+                            <span class="toolbar-divider"></span>
+                            
+                            <!-- כותרות ופסקאות -->
+                            <button type="button" class="toolbar-btn" onclick="formatHeading('h1')" title="כותרת ראשית">
+                                <i class="fas fa-heading"></i><sup>1</sup>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatHeading('h2')" title="כותרת משנית">
+                                <i class="fas fa-heading"></i><sup>2</sup>
+                            </button>
+                            <button type="button" class="toolbar-btn" onclick="formatHeading('p')" title="פסקה">
+                                <i class="fas fa-paragraph"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- שדה טקסט עשיר פשוט -->
+                        <div contenteditable="true" id="editor" class="rich-text-area"></div>
+                        <textarea name="text_content" id="text_content" style="display: none;"></textarea>
+                        
+                        <p class="text-sm text-gray-500 mt-2">הערה: ניתן לסמן טקסט ולעצב אותו באמצעות כפתורי הסרגל למעלה.</p>
+                    </div>
+                </div>
+                
+                <!-- פרטי הלקוח -->
+                <div class="form-section">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">פרטי הלקוח</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="customer_name" class="form-label">שם הלקוח</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <input type="text" id="customer_name" name="customer_name" class="form-input pr-10" placeholder="הכנס את שם הלקוח">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="customer_email" class="form-label">דוא"ל</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <input type="email" id="customer_email" name="customer_email" class="form-input pr-10" placeholder="example@example.com">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="customer_phone" class="form-label">מספר טלפון</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <input type="tel" id="customer_phone" name="customer_phone" class="form-input pr-10" placeholder="הכנס מספר טלפון" dir="ltr">
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">חשוב: אם תספק מספר טלפון, תוכל לשלוח הודעת WhatsApp עם קישור לחוזה</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- הערות ומידע נוסף -->
+                <div class="form-section">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">הערות ומידע נוסף</h2>
+                    
+                    <div>
+                        <label for="notes" class="form-label">הערות (לשימוש פנימי בלבד)</label>
+                        <textarea id="notes" name="notes" rows="3" class="form-input" placeholder="הוסף הערות שיופיעו רק בפנל הניהול שלך"></textarea>
+                    </div>
+                </div>
+                
+                <!-- כפתורי שליחה/ביטול -->
+                <div class="flex justify-end space-x-4 space-x-reverse mt-8">
+                    <a href="{{ url_for('business_dashboard') }}" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+                        ביטול
+                    </a>
+                    <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors shadow-md">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        יצירת חוזה
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // תבניות מוכנות מראש
+        const templates = {
+            empty: "",
+            employment: `<h1 style="text-align: center;">הסכם העסקה</h1>
+
+<p><strong>הואיל:</strong> והמעסיק מעוניין להעסיק את העובד בתפקיד ____________;</p>
+<p><strong>והואיל:</strong> והעובד מעוניין לעבוד אצל המעסיק בתפקיד האמור;</p>
+<p><strong>לפיכך הוסכם בין הצדדים כדלקמן:</strong></p>
+<ol>
+<li><strong>המבוא</strong> להסכם זה מהווה חלק בלתי נפרד הימנו.</li>
+<li><strong>תקופת העסקה</strong>
+<ol>
+<li>תחילת העסקתו של העובד הינה מיום ________.</li>
+<li>ששת החודשים הראשונים להעסקתו של העובד יהוו תקופת ניסיון.</li>
+</ol>
+</li>
+<li><strong>התפקיד</strong>
+<ol>
+<li>העובד יועסק בתפקיד ________ ויבצע את כל המטלות הקשורות לתפקיד זה.</li>
+<li>העובד יהיה כפוף ל________ או למי שימונה מטעם המעסיק.</li>
+</ol>
+</li>
+<li><strong>שכר ותנאים</strong>
+<ol>
+<li>שכרו החודשי של העובד יעמוד על סך של ________ ₪ ברוטו.</li>
+<li>המעסיק יפריש עבור העובד לקרן פנסיה/ביטוח מנהלים בהתאם להוראות החוק.</li>
+</ol>
+</li>
+</ol>`,
+            service: `<h1 style="text-align: center;">הסכם למתן שירותים</h1>
+
+<p><strong>הואיל:</strong> ונותן השירות עוסק במתן שירותי ____________;</p>
+<p><strong>והואיל:</strong> והמזמין מעוניין לקבל מנותן השירות שירותים כמפורט בהסכם זה;</p>
+<p><strong>לפיכך הוסכם בין הצדדים כדלקמן:</strong></p>
+<ol>
+<li><strong>השירותים</strong>
+<ol>
+<li>נותן השירות יספק למזמין את השירותים הבאים: ____________.</li>
+<li>השירותים יסופקו בהתאם ללוח הזמנים הבא: ____________.</li>
+</ol>
+</li>
+<li><strong>התמורה</strong>
+<ol>
+<li>בתמורה למתן השירותים ישלם המזמין לנותן השירות סך של __________ ₪ בתוספת מע"מ כדין.</li>
+<li>התשלום יבוצע באופן הבא: ____________.</li>
+</ol>
+</li>
+<li><strong>תקופת ההסכם</strong>
+<ol>
+<li>הסכם זה יהיה בתוקף החל מיום חתימתו ועד ליום ________.</li>
+</ol>
+</li>
+</ol>`,
+            nda: `<h1 style="text-align: center;">הסכם סודיות</h1>
+
+<p><strong>הואיל:</strong> והחברה עומדת לחשוף בפני מקבל המידע מידע סודי הקשור לעסקיה, מוצריה ו/או שירותיה;</p>
+<p><strong>והואיל:</strong> והחברה מעוניינת להגן על סודיות המידע;</p>
+<p><strong>לפיכך הוסכם בין הצדדים כדלקמן:</strong></p>
+<ol>
+<li><strong>מידע סודי</strong> - כל מידע, בין אם בעל פה ובין אם בכתב, הקשור לחברה, לרבות אך לא רק, מידע עסקי, מסחרי, טכנולוגי, מקצועי, תכנון, מידע הקשור למוצרים או שירותים, וכן מידע הקשור ללקוחות, ספקים ואנשי קשר עסקיים.</li>
+<li><strong>התחייבויות מקבל המידע</strong>
+<ol>
+<li>מקבל המידע מתחייב לשמור בסודיות מוחלטת ולא לגלות, להעביר, למסור, להביא לידיעת צד ג' כלשהו ו/או לעשות שימוש כלשהו במידע הסודי, למעט לצורך המטרה שלשמה נמסר לו המידע.</li>
+<li>מקבל המידע מתחייב לנקוט באמצעי זהירות סבירים וקפדניים על מנת למנוע אובדן, גניבה או הגעה של המידע הסודי לידי צד ג' כלשהו.</li>
+</ol>
+</li>
+<li><strong>תקופת הסודיות</strong> - התחייבויות מקבל המידע על פי הסכם זה יחולו במשך תקופה של __ שנים מיום חתימת הסכם זה.</li>
+</ol>`
+        };
+        
+        // טאבים - מעבר בין PDF לטקסט
+        const tabFile = document.getElementById('tab-file');
+        const tabText = document.getElementById('tab-text');
+        const uploadSection = document.getElementById('upload-section');
+        const textSection = document.getElementById('text-section');
+        const editor = document.getElementById('editor');
+        const hiddenTextArea = document.getElementById('text_content');
+        
+        // הגדרת סוג החוזה
+        let contractType = 'file';
+        const contractTypeField = document.getElementById('contract_type_field');
+        
+        // מעבר לטאב PDF
+        tabFile.addEventListener('click', function() {
+            tabFile.classList.remove('tab-inactive');
+            tabFile.classList.add('tab-active');
+            tabText.classList.remove('tab-active');
+            tabText.classList.add('tab-inactive');
+            
+            uploadSection.classList.remove('hidden');
+            textSection.classList.add('hidden');
+            
+            contractType = 'file';
+            contractTypeField.value = 'file';
+        });
+        
+        // מעבר לטאב טקסט
+        tabText.addEventListener('click', function() {
+            tabText.classList.remove('tab-inactive');
+            tabText.classList.add('tab-active');
+            tabFile.classList.remove('tab-active');
+            tabFile.classList.add('tab-inactive');
+            
+            textSection.classList.remove('hidden');
+            uploadSection.classList.add('hidden');
+            
+            contractType = 'text';
+            contractTypeField.value = 'text';
+        });
+        
+        // טיפול בבחירת תבניות
+        const templateCards = document.querySelectorAll('.template-card');
+        templateCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const templateName = this.getAttribute('data-template');
+                const templateContent = templates[templateName];
+                
+                // הסרת הבחירה הנוכחית
+                templateCards.forEach(c => c.classList.remove('selected'));
+                
+                // הדגשת התבנית שנבחרה
+                this.classList.add('selected');
+                
+                // הכנסת התבנית לעורך
+                if (templateContent) {
+                    editor.innerHTML = templateContent;
+                } else {
+                    editor.innerHTML = '';
+                }
+            });
+        });
+        
+        // טיפול בהעלאת קבצים
+        const dropArea = document.getElementById('drop-area');
+        const documentInput = document.getElementById('document-input');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const uploadPreview = document.getElementById('upload-preview');
+        const filename = document.getElementById('filename');
+        const filesize = document.getElementById('filesize');
+        const fileIcon = document.getElementById('file-icon');
+        const removeFile = document.getElementById('remove-file');
+        const extractTextBtn = document.getElementById('extract-text-btn');
+        const extractionLoading = document.getElementById('extraction-loading');
+        
+        // כפתור חילוץ טקסט וטיפול במעבר לעריכה
+        extractTextBtn.addEventListener('click', function() {
+            if (!documentInput.files.length) {
+                showAlert('נא להעלות קובץ תחילה', 'error');
+                return;
+            }
+            
+            const file = documentInput.files[0];
+            
+            // הצגת אנימציית טעינה
+            extractTextBtn.classList.add('hidden');
+            extractionLoading.classList.remove('hidden');
+            
+            // יצירת אובייקט FormData לשליחת הקובץ
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // שליחת הקובץ לשרת לחילוץ טקסט
+            fetch('/api/extract-text', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showAlert(data.error, 'error');
+                    extractTextBtn.classList.remove('hidden');
+                    extractionLoading.classList.add('hidden');
+                    return;
+                }
+                
+                // הצגת הטקסט המחולץ בעורך עם שמירה על מבנה HTML
+                updateEditorContent(data.text);
+                
+                // מעבר לטאב עריכת הטקסט, ושינוי סוג החוזה ל-'text'
+                tabText.click();
+                contractType = 'text';
+                contractTypeField.value = 'text';
+                
+                // ניקוי שדה הקובץ - לא נשתמש בו יותר כי עברנו למצב טקסט
+                documentInput.value = '';
+                
+                // רגע אחרי המעבר לטאב הטקסט, יישור הטקסט לימין אם צריך
+                setTimeout(() => {
+                    // בדיקה אם צריך לישר לימין (אם אין כבר יישור)
+                    if (!editor.style.textAlign) {
+                        formatText('justifyRight');
+                    }
+                }, 100);
+                
+                // הוספת סגנון לעורך להצגה נכונה של תוכן מעוצב
+                editor.classList.add('formatted-content');
+                
+                // הסתרת אנימציית הטעינה והחזרת כפתור החילוץ
+                extractTextBtn.classList.remove('hidden');
+                extractionLoading.classList.add('hidden');
+                
+                showAlert('הטקסט חולץ בהצלחה! עכשיו אפשר לערוך אותו.', 'success');
+            })
+            .catch(error => {
+                console.error('שגיאה בחילוץ הטקסט:', error);
+                showAlert('אירעה שגיאה בחילוץ הטקסט. נסה שוב או הזן טקסט באופן ידני.', 'error');
+                extractTextBtn.classList.remove('hidden');
+                extractionLoading.classList.add('hidden');
+            });
+        });
+        
+        // לחיצה לבחירת קובץ
+        uploadPlaceholder.addEventListener('click', function() {
+            documentInput.click();
+        });
+        
+        // האזנה לבחירת קובץ
+        documentInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        // מניעת התנהגות ברירת המחדל של גרירה
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // הדגשה בעת גרירה מעל האזור
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropArea.classList.add('border-primary');
+            dropArea.classList.add('bg-blue-50');
+        }
+        
+        function unhighlight() {
+            dropArea.classList.remove('border-primary');
+            dropArea.classList.remove('bg-blue-50');
+        }
+        
+        // טיפול בקבצים שנגררו
+        dropArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            // בדיקה שהקובץ התקבל כראוי
+            if (files && files.length > 0) {
+                console.log('קובץ נגרר:', files[0].name, 'סוג:', files[0].type);
+                handleFiles(files);
+            } else {
+                console.error('לא התקבלו קבצים בגרירה');
+            }
+        }
+        
+        // הגדרת מיפוי בין סיומות קבצים לאייקונים
+        const fileIconMap = {
+            'pdf': 'fa-file-pdf',
+            'docx': 'fa-file-word',
+            'doc': 'fa-file-word',
+            'txt': 'fa-file-alt',
+            'text': 'fa-file-alt',
+            'rtf': 'fa-file-alt'
+        };
+        
+        // הגדרת מיפוי בין סוגי MIME לסיומות קבצים
+        const allowedFileTypes = {
+            'application/pdf': 'pdf',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+            'application/msword': 'doc',
+            'text/plain': 'txt',
+            'application/rtf': 'rtf',
+            'text/rtf': 'rtf'
+        };
+        
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                console.log('מטפל בקובץ:', file.name, 'סוג:', file.type);
+                
+                // קבלת הסיומת מהשם
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                
+                // בדיקה אם הקובץ מסוג מאושר
+                let isFileTypeAllowed = false;
+                
+                // בדיקה לפי סוג MIME
+                if (allowedFileTypes[file.type]) {
+                    isFileTypeAllowed = true;
+                    console.log('סוג קובץ תקין לפי MIME:', file.type);
+                }
+                
+                // בדיקה לפי סיומת (למקרה שה-MIME לא מזוהה נכון)
+                if (['pdf', 'docx', 'doc', 'txt', 'text', 'rtf'].includes(fileExt)) {
+                    isFileTypeAllowed = true;
+                    console.log('סוג קובץ תקין לפי סיומת:', fileExt);
+                }
+                
+                if (!isFileTypeAllowed) {
+                    console.error('סוג קובץ לא תקין:', fileExt, file.type);
+                    showAlert('אנא העלה קובץ מאחד הסוגים הבאים: PDF, DOCX, DOC, TXT או RTF', 'error');
+                    return;
+                }
+                
+                // גודל מקסימלי - 10MB
+                if (file.size > 10 * 1024 * 1024) {
+                    showAlert('הקובץ גדול מדי. הגודל המקסימלי הוא 10MB', 'error');
+                    return;
+                }
+                
+                // הצגת פרטי הקובץ
+                filename.textContent = file.name;
+                filesize.textContent = formatFileSize(file.size);
+                
+                // עדכון האייקון בהתאם לסוג הקובץ
+                fileIcon.className = 'fas text-3xl';
+                if (fileIconMap[fileExt]) {
+                    fileIcon.classList.add(fileIconMap[fileExt]);
+                } else {
+                    fileIcon.classList.add('fa-file'); // אייקון ברירת מחדל
+                }
+                
+                // עדכון האינפוט הסמוי עם הקובץ שנבחר
+                // יצירת FileList חדש (בגרירה לא תמיד מסתנכרן עם האינפוט)
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                documentInput.files = dataTransfer.files;
+                
+                uploadPlaceholder.classList.add('hidden');
+                uploadPreview.classList.remove('hidden');
+                console.log('הקובץ נוסף בהצלחה:', file.name);
+            }
+        }
+        
+        // הסרת הקובץ
+        removeFile.addEventListener('click', function() {
+            documentInput.value = '';
+            uploadPlaceholder.classList.remove('hidden');
+            uploadPreview.classList.add('hidden');
+        });
+        
+        // המרת גודל הקובץ ליחידות אנושיות
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' bytes';
+            else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            else return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        
+        // וידוא טופס לפני שליחה
+        document.getElementById('contract-form').addEventListener('submit', function(e) {
+            if (contractType === 'file' && !documentInput.files.length) {
+                e.preventDefault();
+                showAlert('נא להעלות קובץ או לעבור למצב יצירת טקסט', 'error');
+                return;
+            }
+            
+            if (contractType === 'text' && editor.innerHTML.trim() === '') {
+                e.preventDefault();
+                showAlert('נא להזין תוכן טקסט לחוזה', 'error');
+                return;
+            }
+            
+            // העתקת תוכן העורך לשדה החבוי לפני שליחה
+            if (contractType === 'text') {
+                // שמירה של תוכן העורך כולל תגי HTML
+                hiddenTextArea.value = editor.innerHTML;
+            }
+        });
+        
+        // פונקציה להצגת הודעות (מוגדרת ב-base.html)
+        function showAlert(message, type) {
+            if (typeof window.showAlert === 'function') {
+                window.showAlert(message, type);
+            } else {
+                alert(message);
+            }
+        }
+        
+        // שיטה לעדכון תוכן העורך עם שמירת העיצוב HTML
+        function updateEditorContent(htmlContent) {
+            // עדכון תוכן העורך - שמירה על העיצוב
+            editor.innerHTML = htmlContent;
+            
+            // וידוא שהעורך ממשיך להיות עריך
+            setTimeout(() => {
+                // מיקום הסמן בסוף הטקסט
+                placeCaretAtEnd(editor);
+            }, 100);
+        }
+        
+        // פונקציה למיקום הסמן בסוף אלמנט
+        function placeCaretAtEnd(el) {
+            el.focus();
+            
+            // יצירת טווח בסוף האלמנט
+            if (window.getSelection && document.createRange) {
+                const range = document.createRange();
+                range.selectNodeContents(el);
+                range.collapse(false); // false = collapse to end
+                
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    });
+    
+    // פונקציות עיצוב טקסט
+    function formatText(command) {
+        document.execCommand(command, false, null);
+        document.getElementById('editor').focus();
+    }
+    
+    function formatHeading(tag) {
+        document.execCommand('formatBlock', false, '<' + tag + '>');
+        document.getElementById('editor').focus();
+    }
+</script>
+{% endblock %} 
